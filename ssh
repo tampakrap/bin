@@ -1,0 +1,20 @@
+#!/bin/bash
+# Simple ssh wrapper, in order to access my home servers from my laptop
+# when I am away from home
+
+SSH="/usr/bin/ssh"
+ADDR="home.tampakrap.gr -p"
+
+if [[ $1 == ['beatbox' || 'underground'] ]]; then
+	ping $1 -c 4 >/dev/null 2>&1
+	echo $? > /tmp/$ADDR
+	if [[ `cat /tmp/$ADDR` == 1 ]]; then
+		case "$1" in
+			'beatbox') $SSH $ADDR -p 2581 ;;
+			'underground') $SSH $ADDR -p 2582 ;;
+			*) $SSH $@ ;;
+		esac
+	else
+		$SSH $@
+	fi
+fi

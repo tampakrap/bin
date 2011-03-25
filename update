@@ -1,0 +1,29 @@
+#!/bin/sh
+# Simple script that updates the tree, all the overlays, and runs some
+# suplementary commands. It needs a properly configured keychain instance,
+# and the package app-portage/eix
+
+USER="tampakrap"
+
+. /etc/init.d/functions.sh
+
+for overlay in `eix --print PORTDIR_OVERLAY`
+do
+	einfo "Updating overlay ${overlay##*/}" &&
+	( 
+		cd $overlay > /dev/null &&
+		if [ -e .svn ]; then
+			su -c "source ~/.keychain/$HOSTNAME-sh; svn up" $USER
+		else
+			su -c "source ~/.keychain/$HOSTNAME-sh; git pull" $USER
+		fi
+	) || eerror "Updating overlay ${overlay##*/} failed"
+done
+einfo "Updating portage tree"
+su -c "source ~/.keychain/$HOSTNAME-sh; emerge --sync" $USER
+einfo "Running eix-update"
+eix-update
+einfo "Generating use.local.desc"
+egencache --update-use-local-desc
+einfo "Running emerge world"
+emerge -uDNpv @world

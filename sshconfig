@@ -1,0 +1,7 @@
+Host ktown 
+	HostName ktown.kde.org
+	User ftpgentoo
+
+Host linuxteam-bak
+	User linuxteam
+	Port 3030
