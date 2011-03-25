@@ -1,3 +1,6 @@
+Host svn.kde.org
+	User theoc
+
 Host ktown 
 	HostName ktown.kde.org
 	User ftpgentoo

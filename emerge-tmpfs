@@ -1,0 +1,30 @@
+#!/bin/bash
+# Emerge wrapper that mounts portage tmpdir in tmpfs
+
+MEMSIZE=4G
+TMPDIR=`portageq envvar PORTAGE_TMPDIR`/portage
+
+. /etc/init.d/functions.sh
+
+if [[ -z $(mount | grep "$TMPDIR") ]]; then
+	ebegin "Mounting $MEMSIZE of memory to $TMPDIR"
+	mount -t tmpfs tmpfs -o size=$MEMSIZE "$TMPDIR"
+	eend $?
+	mounted=1
+fi
+
+STAMP=$TMPDIR/.keep-`uuidgen`
+
+touch "$STAMP"
+einfo "Emerging $*"
+emerge $*
+retval=$?
+rm -f "$STAMP"
+
+if [[ -z `find $TMPDIR -name '.keep-*'` ]]; then
+	ebegin "Unmounting ramdisk"
+	umount -l "$TMPDIR"
+	eend $?
+fi
+
+exit $retval

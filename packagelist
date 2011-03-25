@@ -1,0 +1,10 @@
+#!/bin/bash
+# Generates a list of KDE/Qt packages
+
+. /etc/init.d/functions.sh
+
+pquery --herd=kde --herd=qt --raw --repo $(portageq portdir)  -n | grep -v kde-base | grep -v kde-misc | grep -v x11-libs/qt* | sort -u > /tmp/packagelisttmp
+cat /tmp/packagelisttmp | while read i; do p="$p|$i"; echo "kde-base*|kde-misc*|x11-libs/qt*$p" > /tmp/packagelistfinal; done
+einfo "list of packages"
+cat /tmp/packagelistfinal
+#rm /tmp/packagelist*
