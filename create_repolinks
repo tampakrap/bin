@@ -25,10 +25,10 @@ cd $OVERLAY_DIR
 for repo in `ls -d */`
 do
 	pushd $repo > /dev/null
-	ewarn "Checking $repo overlay"
+	einfo "Checking $repo overlay"
 	if [[ ! -z `grep git.overlays.gentoo.org .git/config` ]]; then
 		sed -i -e 's:git\://git.overlays.gentoo.org/:gentoo\::' .git/config
-		einfo "gentoo git url corrected for $repo overlay"
+		ewarn "gentoo git url corrected for $repo overlay"
 	fi
 	[[ -L ${GENTOO_REPO_DIR}${repo%/*} ]] || (ln -s /var/lib/layman/$repo ${GENTOO_REPO_DIR} && einfo "New symlink for $repo overlay")
 	popd > /dev/null
@@ -39,10 +39,10 @@ cd $DISTDIR/egit-src
 for repo in `ls -d */`
 do
 	pushd $repo > /dev/null
-	ewarn "Checking $repo repository"
+	einfo "Checking $repo repository"
 	if [[ ! -z `grep anongit.kde.org .git/config` ]]; then
 		sed -i -e 's:git\://anongit.kde.org:kde\::' .git/config
-		einfo "kde git url corrected for $repo"
+		ewarn "kde git url corrected for $repo"
 	fi
 	if [[ ! -z `grep kde: .git/config` ]]; then
 		[[ -L ${KDE_REPO_DIR}${repo%/*} ]] || (ln -s ${DISTDIR}/egit-src/$repo ${KDE_REPO_DIR} && einfo "New symlink for $repo")
