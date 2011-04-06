@@ -5,16 +5,15 @@
 SSH="/usr/bin/ssh"
 ADDR="home.tampakrap.gr -p"
 
-if [[ $1 == ['beatbox' || 'underground'] ]]; then
+if [[ $1 == 'beatbox' ]] || [[ $1 = 'underground' ]]; then
 	ping $1 -c 4 >/dev/null 2>&1
-	echo $? > /tmp/$ADDR
-	if [[ `cat /tmp/$ADDR` == 1 ]]; then
+	STATUS=`echo $?`
+	if [[ $STATUS == 1 ]]; then
 		case "$1" in
-			'beatbox') $SSH $ADDR -p 2581 ;;
-			'underground') $SSH $ADDR -p 2582 ;;
-			*) $SSH $@ ;;
+			'beatbox') $SSH $ADDR 2581 ;;
+			'underground') $SSH $ADDR 2582 ;;
 		esac
-	else
-		$SSH $@
 	fi
+else
+	$SSH $@
 fi
