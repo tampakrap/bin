@@ -1,6 +1,9 @@
 [user]
 	name = Theo Chatzimichos
 	email = tampakrap@gentoo.org
+[github]
+	user = tampakrap
+	token = f5fea18566121a1482fbc3f61afd21f7
 # KDE Repos
 [url "git://anongit.kde.org/"]
 	insteadOf = kde:
