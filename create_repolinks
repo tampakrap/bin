@@ -30,7 +30,7 @@ do
 		sed -i -e 's:git\://git.overlays.gentoo.org/:gentoo\::' .git/config
 		ewarn "gentoo git url corrected for $repo overlay"
 	fi
-	[[ -L ${GENTOO_REPO_DIR}${repo%/*} ]] || (ln -s /var/lib/layman/$repo ${GENTOO_REPO_DIR} && einfo "New symlink for $repo overlay")
+	[[ -L ${GENTOO_REPO_DIR}${repo%/*} ]] || (ln -s /var/lib/layman/$repo ${GENTOO_REPO_DIR} && ewarn "New symlink for $repo overlay")
 	popd > /dev/null
 done
 
@@ -45,7 +45,7 @@ do
 		ewarn "kde git url corrected for $repo"
 	fi
 	if [[ ! -z `grep kde: .git/config` ]]; then
-		[[ -L ${KDE_REPO_DIR}${repo%/*} ]] || (ln -s ${DISTDIR}/egit-src/$repo ${KDE_REPO_DIR} && einfo "New symlink for $repo")
+		[[ -L ${KDE_REPO_DIR}${repo%/*} ]] || (ln -s ${DISTDIR}/egit-src/$repo ${KDE_REPO_DIR} && ewarn "New symlink for $repo")
 	fi
 	popd > /dev/null
 done
