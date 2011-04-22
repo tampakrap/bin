@@ -1,0 +1,72 @@
+#!/usr/bin/env python
+# Updates the info of the gentoo servers. Also it merges files under /etc/hosts.d in /etc/hosts
+
+from BeautifulSoup import BeautifulSoup
+from StringIO import StringIO
+import pycurl
+import shutil
+import socket
+import sys
+
+serverlist = []
+hostsmodules = ['main', 'home', 'gentoo-el', 'linuxteam', 'kde', 'gentoo']
+
+def fetch_gentoo_serverlist():
+	global serverlist
+	b = StringIO()
+	conn = pycurl.Curl()
+	conn.setopt(pycurl.URL, 'http://www.gentoo.org/proj/en/infrastructure/server-specs.xml?passthru=1')
+	conn.setopt(pycurl.WRITEFUNCTION, b.write)
+	conn.perform()
+	soup = BeautifulSoup(b.getvalue())
+	ti = soup.findAll('ti')
+	i = 0
+	while i < len(ti):
+		if ti[i].contents[0][-1] == '*':
+			hostname = ti[i].contents[0][:-1]
+		else:
+			hostname = ti[i].contents[0]
+		i = i + 9
+		serverlist.append(hostname)
+
+def clean_serverlist(infra):
+	global serverlist
+	i = 0
+	f = open('/etc/hosts.d/%s' % infra)
+	for line in f:
+		temp = line.split('\t')[1][:-1]
+		while i <= len(serverlist[i]) and temp > str(serverlist[i]):
+			i = i + 1
+		if i > len(serverlist[i]):
+			break
+		if serverlist[i] == temp:
+			serverlist.pop(i)
+	f.close()
+
+def update_hosts_module(infra):
+	global serverlist
+	f = open('/etc/hosts.d/%s' % infra, 'w')
+	for server in serverlist:
+		ip = socket.gethostbyname_ex('%s.gentoo.org' % server)[2][0]
+		f.write('%s\t%s\n' % (ip, server))
+	f.close()
+
+def merge_hosts_modules():
+	f = open('/etc/hosts', 'w')
+	for hostfile in hostsmodules:
+		f.write('\n# %s\n' % hostfile)
+		shutil.copyfileobj(open('/etc/hosts.d/%s' % hostfile, 'r'), f)
+	f.close()
+
+def main():
+	try:
+		if sys.argv[1] == 'gentoo':
+			fetch_gentoo_serverlist()
+			update_hosts_module(sys.argv[1])
+	except IndexError:
+		pass
+#	clean_serverlist(sys.argv[1])
+	merge_hosts_modules()
+
+if __name__ == '__main__':
+	main()
