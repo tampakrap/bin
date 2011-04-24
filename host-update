@@ -48,6 +48,8 @@ def update_hosts_module(infra):
 	f = open('/etc/hosts.d/%s' % infra, 'w')
 	for server in serverlist:
 		ip = socket.gethostbyname_ex('%s.gentoo.org' % server)[2][0]
+		if len(ip) <= 11:
+			ip = ip + '\t'
 		f.write('%s\t%s\n' % (ip, server))
 	f.close()
 
