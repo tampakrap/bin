@@ -2,7 +2,7 @@ Host svn.kde.org
 	User theoc
 
 Host ktown 
-	HostName ktown.kde.org
+	Hostname ktown.kde.org
 	User ftpgentoo
 
 Host tyranus
@@ -14,3 +14,7 @@ Host vectivus
 
 Host bane
 	Port 3032
+
+Host infernus
+	Hostname infernus.tomkap.gr
+	User gentoo
