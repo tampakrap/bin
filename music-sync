@@ -1,3 +1,12 @@
 #!/bin/bash
+# Syncs my Music from my desktop to my laptop
 
-rsync --progress --stats -aHuvh --delete-after --delete-excluded --exclude=**~ --exclude=**/lost+found*/ -e ssh canibus:/mnt/multimedia/Music /mnt/multimedia
+if [[ $(whoami) != tampakrap ]]
+then
+	echo "Must be run as user tampakrap"
+	exit 1
+fi
+
+RSYNC_OPTS="--progress --stats -aHuvh --delete-after --delete-excluded --exclude=**~ --exclude=**/lost+found*/"
+
+rsync ${RSYNC_OPTS} -e ssh canibus:/mnt/multimedia/Music /mnt/multimedia
