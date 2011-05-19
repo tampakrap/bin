@@ -1,6 +1,9 @@
 #!/bin/bash
 # This script creates symlinks of the various personal scripts I keep in my tampakrap/scripts.git repository
 
+. /etc/init.d/functions.sh
+
+einfo "Update symlinks for ${HOSTNAME}"
 case $HOSTNAME in
 	canibus)
 		REPOSITORY="/home/tampakrap/Source_Code/raekwon/scripts"
@@ -25,7 +28,7 @@ case $HOSTNAME in
 
 	virtuoso)
 		REPOSITORY="/home/tampakrap/Source_Code/raekwon/scripts"
-		
+
 		# /usr/local/sbin
 		for i in create_symlinks emerge-tmpfs host-update update
 		do
@@ -65,5 +68,9 @@ case $HOSTNAME in
 		[[ -L /etc/hosts.d ]] || ln -s ${REPOSITORY}/hosts.d
 		;;
 
-	*) ;;
+	*)
+		ewarn "${HOSTNAME} not found, exiting"
+		exit 1
 esac
+
+einfo "Done"
