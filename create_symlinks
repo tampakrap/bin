@@ -1,0 +1,69 @@
+#!/bin/bash
+# This script creates symlinks of the various personal scripts I keep in my tampakrap/scripts.git repository
+
+case $HOSTNAME in
+	canibus)
+		REPOSITORY="/home/tampakrap/Source_Code/raekwon/scripts"
+		
+		# /usr/local/sbin
+		for i in create_symlinks emerge-tmpfs host-update update
+		do
+			DESTINATION="/usr/local/sbin"
+			[[ -L ${DESTINATION}/${i} ]] || ln -s ${REPOSITORY}/${i} ${DESTINATION}
+		done
+
+		# /usr/local/bin
+		for i in create_repolinks git packagelist
+		do
+			DESTINATION="/usr/local/bin"
+			[[ -L ${DESTINATION}/${i} ]] || ln -s ${REPOSITORY}/${i} ${DESTINATION}
+		done
+
+		# /etc/hosts.d
+		[[ -L /etc/hosts.d ]] || ln -s ${REPOSITORY}/hosts.d
+		;;
+
+	virtuoso)
+		REPOSITORY="/home/tampakrap/Source_Code/raekwon/scripts"
+		
+		# /usr/local/sbin
+		for i in create_symlinks emerge-tmpfs host-update update
+		do
+			DESTINATION="/usr/local/sbin"
+			[[ -L ${DESTINATION}/${i} ]] || ln -s ${REPOSITORY}/${i} ${DESTINATION}
+		done
+
+		# /usr/local/bin
+		for i in create_repolinks music-sync git packagelist ssh
+		do
+			DESTINATION="/usr/local/bin"
+			[[ -L ${DESTINATION}/${i} ]] || ln -s ${REPOSITORY}/${i} ${DESTINATION}
+		done
+
+		# /etc/hosts.d
+		[[ -L /etc/hosts.d ]] || ln -s ${REPOSITORY}/hosts.d
+		;;
+
+	eyedea)
+		REPOSITORY="/var/repos/scripts"
+		
+		# /usr/local/sbin
+		for i in create_symlinks emerge-notifier emerge-tmpfs host-update
+		do
+			DESTINATION="/usr/local/sbin"
+			[[ -L ${DESTINATION}/${i} ]] || ln -s ${REPOSITORY}/${i} ${DESTINATION}
+		done
+
+		# /usr/local/bin
+		#for i in
+		#do
+		#	DESTINATION="/usr/local/bin"
+		#	[[ -L ${DESTINATION}/${i} ]] || ln -s ${REPOSITORY}/${i} ${DESTINATION}
+		#done
+
+		# /etc/hosts.d
+		[[ -L /etc/hosts.d ]] || ln -s ${REPOSITORY}/hosts.d
+		;;
+
+	*) ;;
+esac
