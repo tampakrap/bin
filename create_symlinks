@@ -22,6 +22,10 @@ case $HOSTNAME in
 			[[ -L ${DESTINATION}/${i} ]] || ln -s ${REPOSITORY}/${i} ${DESTINATION}
 		done
 
+		# homedir
+		[[ -L /home/tampakrap/.gitconfig ]] || su -c "ln -s ${REPOSITORY}/gitconfig ~/.gitconfig" tampakrap
+		[[ -L /home/tampakrap/.ssh/config ]] || su -c "ln -s ${REPOSITORY}/sshconfig ~/.ssh/config" tampakrap
+
 		# /etc/hosts.d
 		[[ -L /etc/hosts.d ]] || ln -s ${REPOSITORY}/hosts.d
 		;;
@@ -42,6 +46,10 @@ case $HOSTNAME in
 			DESTINATION="/usr/local/bin"
 			[[ -L ${DESTINATION}/${i} ]] || ln -s ${REPOSITORY}/${i} ${DESTINATION}
 		done
+
+		# homedir
+		[[ -L /home/tampakrap/.gitconfig ]] || su -c "ln -s ${REPOSITORY}/gitconfig ~/.gitconfig" tampakrap
+		[[ -L /home/tampakrap/.ssh/config ]] || su -c "ln -s ${REPOSITORY}/sshconfig ~/.ssh/config" tampakrap
 
 		# /etc/hosts.d
 		[[ -L /etc/hosts.d ]] || ln -s ${REPOSITORY}/hosts.d
