@@ -3,82 +3,75 @@
 
 . /etc/init.d/functions.sh
 
-einfo "Update symlinks for ${HOSTNAME}"
+if [[ $(whoami) != "root" ]]; then
+	eerror "Must be run as root, terminating"
+	exit 1
+fi
+
+USER="tampakrap"
+
+function _update() {
+	local DESTINATIONS="/usr/local/sbin /usr/local/bin"
+
+	einfo "Update symlinks for ${HOSTNAME}"
+
+	for DESTINATION in ${DESTINATIONS}; do
+		if [[ ${DESTINATION} == "/usr/local/sbin" ]]; then
+			SCRIPTS=${SBIN}
+		else
+			SCRIPTS=${BIN}
+		fi
+		for script in ${SCRIPTS}; do
+			[[ -L ${DESTINATION}/${script} ]] || \
+			( ln -s ${REPOSITORY}/${script} ${DESTINATION} && \
+			einfo "New script ${script} installed in ${DESTINATION}" )
+		done
+	done
+	
+	# /etc/hosts.d
+	[[ -L /etc/hosts.d ]] || ( ln -s ${REPOSITORY}/hosts.d && einfo "Installed hosts.d" )
+	
+	# homedir
+	if [[ ${HOMEDIR} == 1 ]]; then
+		[[ -L /home/$USER/.gitconfig ]] || \
+			( su -c "ln -s ${REPOSITORY}/gitconfig ~/.gitconfig" $USER && einfo "Installed .gitconfig" )
+		[[ -L /home/$USER/.ssh/config ]] || \
+			( su -c "ln -s ${REPOSITORY}/sshconfig ~/.ssh/config" $USER && einfo "Installed .ssh/config" )
+	fi
+
+	einfo "Done"
+}
+
 case $HOSTNAME in
 	canibus)
-		REPOSITORY="/home/tampakrap/Source_Code/raekwon/scripts"
-		
-		# /usr/local/sbin
-		for i in create_symlinks emerge-tmpfs host-update update
-		do
-			DESTINATION="/usr/local/sbin"
-			[[ -L ${DESTINATION}/${i} ]] || ln -s ${REPOSITORY}/${i} ${DESTINATION}
-		done
-
-		# /usr/local/bin
-		for i in create_repolinks git packagelist
-		do
-			DESTINATION="/usr/local/bin"
-			[[ -L ${DESTINATION}/${i} ]] || ln -s ${REPOSITORY}/${i} ${DESTINATION}
-		done
-
-		# homedir
-		[[ -L /home/tampakrap/.gitconfig ]] || su -c "ln -s ${REPOSITORY}/gitconfig ~/.gitconfig" tampakrap
-		[[ -L /home/tampakrap/.ssh/config ]] || su -c "ln -s ${REPOSITORY}/sshconfig ~/.ssh/config" tampakrap
-
-		# /etc/hosts.d
-		[[ -L /etc/hosts.d ]] || ln -s ${REPOSITORY}/hosts.d
+		REPOSITORY="/home/$USER/Source_Code/raekwon/scripts"
+		SBIN="create_symlinks emerge-tmpfs host-update update"
+		BIN="create_repolinks git packagelist"
+		HOMEDIR=1
 		;;
 
 	virtuoso)
 		REPOSITORY="/home/tampakrap/Source_Code/raekwon/scripts"
-
-		# /usr/local/sbin
-		for i in create_symlinks emerge-tmpfs host-update update
-		do
-			DESTINATION="/usr/local/sbin"
-			[[ -L ${DESTINATION}/${i} ]] || ln -s ${REPOSITORY}/${i} ${DESTINATION}
-		done
-
-		# /usr/local/bin
-		for i in create_repolinks music-sync git packagelist ssh
-		do
-			DESTINATION="/usr/local/bin"
-			[[ -L ${DESTINATION}/${i} ]] || ln -s ${REPOSITORY}/${i} ${DESTINATION}
-		done
-
-		# homedir
-		[[ -L /home/tampakrap/.gitconfig ]] || su -c "ln -s ${REPOSITORY}/gitconfig ~/.gitconfig" tampakrap
-		[[ -L /home/tampakrap/.ssh/config ]] || su -c "ln -s ${REPOSITORY}/sshconfig ~/.ssh/config" tampakrap
-
-		# /etc/hosts.d
-		[[ -L /etc/hosts.d ]] || ln -s ${REPOSITORY}/hosts.d
+		SBIN="create_symlinks emerge-tmpfs host-update update"
+		BIN="create_repolinks music-sync git packagelist ssh"
+		HOMEDIR=1
 		;;
 
 	eyedea)
 		REPOSITORY="/var/repos/scripts"
-		
-		# /usr/local/sbin
-		for i in create_symlinks emerge-notifier emerge-tmpfs host-update
-		do
-			DESTINATION="/usr/local/sbin"
-			[[ -L ${DESTINATION}/${i} ]] || ln -s ${REPOSITORY}/${i} ${DESTINATION}
-		done
+		SBIN="create_symlinks emerge-tmpfs host-update update-notifier"
+		BIN=""
+		;;
 
-		# /usr/local/bin
-		#for i in
-		#do
-		#	DESTINATION="/usr/local/bin"
-		#	[[ -L ${DESTINATION}/${i} ]] || ln -s ${REPOSITORY}/${i} ${DESTINATION}
-		#done
-
-		# /etc/hosts.d
-		[[ -L /etc/hosts.d ]] || ln -s ${REPOSITORY}/hosts.d
+	evidence)
+		REPOSITORY="/var/repos/scripts"
+		SBIN="create_symlinks emerge-tmpfs host-update update-notifier"
+		BIN=""
 		;;
 
 	*)
-		ewarn "${HOSTNAME} not found, exiting"
+		ewarn "${HOSTNAME} not found, terminating"
 		exit 1
 esac
 
-einfo "Done"
+_update
