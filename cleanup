@@ -1,0 +1,7 @@
+#!/bin/bash
+
+MONTHS=$1
+
+for action in packages distfiles; do
+	eclean -t ${MONTHS}m ${action}
+done
