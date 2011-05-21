@@ -1,8 +1,12 @@
 Host svn.kde.org
 	User theoc
 
-Host ktown 
+Host ktown
 	Hostname ktown.kde.org
+	User ftpgentoo
+
+Host ftpmaster
+	Hostname ftpmaster.kde.org
 	User ftpgentoo
 
 Host tyranus
