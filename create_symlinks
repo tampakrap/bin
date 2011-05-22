@@ -29,7 +29,7 @@ function _update() {
 	done
 	
 	# /etc/hosts.d
-	[[ -L /etc/hosts.d ]] || ( ln -s ${REPOSITORY}/hosts.d && einfo "Installed hosts.d" )
+	[[ -L /etc/hosts.d ]] || ( ln -s ${REPOSITORY}/hosts.d /etc && einfo "Installed hosts.d" )
 	
 	# homedir
 	if [[ ${HOMEDIR} == 1 ]]; then
