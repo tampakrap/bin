@@ -2,16 +2,27 @@
 # Simple ssh wrapper, in order to access my home servers from my laptop
 # when I am away from home
 
+SSID="xmen"
 SSH="/usr/bin/ssh"
 ADDR="home.tampakrap.gr -p"
+SERVER1_NAME="eyedea"
+SERVER2_NAME="evidence"
+SERVER3_NAME="everlast"
+SERVER1_PORT="2107"
+SERVER2_PORT="2108"
+SERVER3_PORT="2109"
 
-if [[ $1 == 'beatbox' ]] || [[ $1 = 'underground' ]]; then
-	ping $1 -c 4 >/dev/null 2>&1
-	STATUS=`echo $?`
-	if [[ $STATUS == 1 ]]; then
+CURRENT_SSID=`/sbin/iwconfig wlan0 | grep ESSID | awk -F: '{ print $2 }' | tr -d '"'`
+CURRENT_SSID=${CURRENT_SSID//[[:space:]]}
+
+if [[ $1 == $SERVER1_NAME ]] || [[ $1 == $SERVER2_NAME ]] || [[ $1 == $SERVER3_NAME ]]; then
+	if [[ $CURRENT_SSID == $SSID ]]; then
+		$SSH $@
+	else
 		case "$1" in
-			'beatbox') $SSH $ADDR 2581 ;;
-			'underground') $SSH $ADDR 2582 ;;
+			$SERVER1_NAME) $SSH $ADDR $SERVER1_PORT ;;
+			$SERVER2_NAME) $SSH $ADDR $SERVER2_PORT ;;
+			$SERVER3_NAME) $SSH $ADDR $SERVER3_PORT ;;
 		esac
 	fi
 else
