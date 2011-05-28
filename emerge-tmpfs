@@ -1,7 +1,7 @@
 #!/bin/bash
 # Emerge wrapper that mounts portage tmpdir in tmpfs
 
-MEMSIZE=4G
+MEMSIZE=$1G
 TMPDIR=`portageq envvar PORTAGE_TMPDIR`/portage
 
 . /etc/init.d/functions.sh
@@ -16,8 +16,7 @@ fi
 STAMP=$TMPDIR/.keep-`uuidgen`
 
 touch "$STAMP"
-einfo "Emerging $*"
-emerge $*
+emerge ${@:2}
 retval=$?
 rm -f "$STAMP"
 
