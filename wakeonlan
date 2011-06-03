@@ -1,0 +1,26 @@
+#!/bin/bash
+# wakeonlan wrapper for my boxes
+
+. /etc/init.d/functions.sh
+case $1 in
+	canibus)
+		MAC="00:1B:FC:D4:DD:DE"
+		;;
+	madlib)
+		;;
+	eyedea)
+		MAC="08:00:36:36:2B:04"
+		;;
+	evidence)
+		MAC="00:E0:4d:03:7E:50"
+		;;
+	everlast)
+		MAC="00:50:FC:FA:05:C9"
+		;;
+	*) ewarn "$1 not found, terminating"
+		exit 1
+		;;
+esac
+
+einfo "Waking up $1"
+/usr/bin/wakeonlan -i 192.168.2.255 $MAC
