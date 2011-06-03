@@ -46,27 +46,39 @@ case $HOSTNAME in
 	canibus)
 		REPOSITORY="/home/$USER/Source_Code/raekwon/scripts"
 		SBIN="create_symlinks emerge-tmpfs host-update update"
-		BIN="create_repolinks git packagelist"
+		BIN="create_repolinks git packagelist wakeonlan"
 		HOMEDIR=1
 		;;
 
 	virtuoso)
 		REPOSITORY="/home/tampakrap/Source_Code/raekwon/scripts"
 		SBIN="create_symlinks emerge-tmpfs host-update update"
-		BIN="create_repolinks music-sync git packagelist ssh"
+		BIN="create_repolinks music-sync git packagelist ssh wakeonlan"
 		HOMEDIR=1
+		;;
+
+	madlib)
+		REPOSITORY="/var/repos/scripts"
+		SBIN="create_symlinks emerge-tmpfs host-update update"
+		BIN="wakeonlan"
 		;;
 
 	eyedea)
 		REPOSITORY="/var/repos/scripts"
 		SBIN="create_symlinks emerge-tmpfs host-update update-notifier"
-		BIN=""
+		BIN="wakeonlan"
 		;;
 
 	evidence)
 		REPOSITORY="/var/repos/scripts"
 		SBIN="create_symlinks emerge-tmpfs host-update update-notifier"
-		BIN=""
+		BIN="wakeonlan"
+		;;
+	
+	evidence)
+		REPOSITORY="/var/repos/scripts"
+		SBIN="create_symlinks emerge-tmpfs host-update update-notifier"
+		BIN="wakeonlan"
 		;;
 
 	*)
