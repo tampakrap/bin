@@ -1,5 +1,4 @@
 #!/bin/bash
-echo "DEBUG: $*"
 # git wrapper in order to clone specific repositories as regular user
 # (instead of portage) adn preserve permissions in updates
 # In order to perform corectly it needs the following in /etc/sudoers:
@@ -15,7 +14,6 @@ GIT="/usr/bin/git"
 
 if [[ $1 == 'clone' ]]; then
 	if [[ $2 == "git://anongit.kde.org/"* ]] && [[ $KDE_DEVELOPER == 1 ]]; then
-		echo 'yes'
 		KDE_REPO=$(echo $2 | sed 's:git\://anongit.kde.org/::')
 		$GIT $@
 		chown -R $USER:$USER $DISTDIR/egit-src/$KDE_REPO
