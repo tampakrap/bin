@@ -1,4 +1,5 @@
 #!/bin/bash
+echo "DEBUG: $*"
 # git wrapper in order to clone specific repositories as regular user
 # (instead of portage) adn preserve permissions in updates
 # In order to perform corectly it needs the following in /etc/sudoers:
@@ -14,12 +15,14 @@ GIT="/usr/bin/git"
 
 if [[ $1 == 'clone' ]]; then
 	if [[ $2 == "git://anongit.kde.org/"* ]] && [[ $KDE_DEVELOPER == 1 ]]; then
+		echo 'yes'
 		KDE_REPO=$(echo $2 | sed 's:git\://anongit.kde.org/::')
-		sudo -u $USER $GIT $1 kde:$KDE_REPO
-#	for some stupid reason the following throws perm error, that the dir can't be created
-#	elif [[ $2 == "git://git.overlays.gentoo.org/"* ]] && [[ $GENTOO_DEVELOPER == 1 ]];then
-#		GENTOO_REPO=$(echo $2 | sed 's:git\://git.overlays.gentoo.org/::')
-#		sudo -u $USER $GIT $1 gentoo:$GENTOO_REPO
+		$GIT $@
+		chown -R $USER:$USER $DISTDIR/egit-src/$KDE_REPO
+	elif [[ $2 == "git://git.overlays.gentoo.org/"* ]] && [[ $GENTOO_DEVELOPER == 1 ]];then
+		GENTOO_REPO=$(echo $2 | sed 's:git\://git.overlays.gentoo.org/::')
+		$GIT $@
+		chown -R $USER:$USER $DISTDIR/egit-src/$GENTOO_REPO
 	else
 		$GIT $@
 	fi
