@@ -1,4 +1,5 @@
 #!/bin/bash
+echo "DEBUG: $*"
 # git wrapper in order to clone specific repositories as regular user
 # (instead of portage) adn preserve permissions in updates
 # In order to perform corectly it needs the following in /etc/sudoers:
@@ -24,8 +25,8 @@ if [[ $1 == 'clone' ]]; then
 	else
 		$GIT $@
 	fi
-else
-	if [[ ! -w .git/config ]] && [[ ${PWD%/*} == $DISTDIR/egit-src ]]; then
+else 
+	if [[ ${PWD%/*} == $DISTDIR/egit-src ]] && ( grep -s -q gentoo .git/config || grep -s -q kde .git/config ); then
 		sudo -u $USER $GIT $@
 	else
 		$GIT $@
