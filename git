@@ -1,5 +1,4 @@
 #!/bin/bash
-echo "DEBUG: $*"
 # git wrapper in order to clone specific repositories as regular user
 # (instead of portage) adn preserve permissions in updates
 # In order to perform corectly it needs the following in /etc/sudoers:
