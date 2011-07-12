@@ -15,19 +15,19 @@ GIT="/usr/bin/git"
 if [[ $1 == 'clone' ]]; then
 	if [[ $2 == "git://anongit.kde.org/"* ]] && [[ $KDE_DEVELOPER == 1 ]]; then
 		KDE_REPO=$(echo $2 | sed 's:git\://anongit.kde.org/::')
-		$GIT $@
+		$GIT "$@"
 		chown -R $USER:$USER $DISTDIR/egit-src/$KDE_REPO
 	elif [[ $2 == "git://git.overlays.gentoo.org/"* ]] && [[ $GENTOO_DEVELOPER == 1 ]];then
 		GENTOO_REPO=$(echo $2 | sed 's:git\://git.overlays.gentoo.org/::')
-		$GIT $@
+		$GIT "$@"
 		chown -R $USER:$USER $DISTDIR/egit-src/$GENTOO_REPO
 	else
-		$GIT $@
+		$GIT "$@"
 	fi
 else 
 	if [[ ${PWD%/*} == $DISTDIR/egit-src ]] && ( grep -s -q gentoo .git/config || grep -s -q kde .git/config ); then
-		sudo -u $USER $GIT $@
+		sudo -u $USER $GIT "$@"
 	else
-		$GIT $@
+		$GIT "$@"
 	fi
 fi
