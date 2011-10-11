@@ -18,7 +18,7 @@ if [[ $1 == 'clone' ]]; then
 		$GIT "$@"
 		chown -R $USER:$USER $DISTDIR/egit-src/$KDE_REPO
 	elif [[ $2 == "git://git.overlays.gentoo.org/"* ]] && [[ $GENTOO_DEVELOPER == 1 ]];then
-		GENTOO_REPO=$(echo $2 | sed 's:git\://git.overlays.gentoo.org/::')
+		GENTOO_REPO=${2/*\/}
 		$GIT "$@"
 		chown -R $USER:$USER $DISTDIR/egit-src/$GENTOO_REPO
 	else
