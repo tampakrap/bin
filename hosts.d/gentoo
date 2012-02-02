@@ -3,7 +3,7 @@
 89.16.167.136	auklet
 140.211.166.187	barbet
 140.211.166.165	bellbird
-140.211.166.176	bittern 		# you are here
+140.211.166.176	bittern
 140.211.166.186	bluebird
 140.211.166.189	bobolink
 140.211.166.178	brambling
@@ -11,10 +11,9 @@
 208.92.234.78	condor
 208.92.234.79	corvid
 134.68.240.58	crane
-140.211.166.170	dove
 134.68.240.61	duck
-140.211.166.166	finch			# !cfengine, root access
-81.93.255.6		flycatcher		# cfengine, shell access
+140.211.166.166	finch
+81.93.255.6		flycatcher
 204.187.15.4	gannet
 204.187.15.6	godwit
 204.187.15.8	grebe
@@ -27,27 +26,26 @@
 194.116.84.30	kea
 208.116.51.2	kookaburra
 140.211.166.177	lark
-209.177.148.229	loon			# !cfengine, no access
+209.177.148.229	loon
 209.177.148.226	magpie
+140.211.166.162	meadowlark
 209.177.148.228	motmot
-140.211.166.168	osprey			# !cfengine, no access
+140.211.166.168	osprey
 91.121.171.161	peacock
-64.127.104.131	peafowl
 66.219.59.40	pelican
 208.92.234.80	pigeon
 134.68.240.60	pheasant
 140.211.166.163	puffin
 134.68.240.40	raven
-64.127.104.134	redtail
 81.93.255.3		sandpiper
 81.93.255.4		skimmer
-209.177.148.227	sparrow			# !cfengine, no access
+209.177.148.227	sparrow
 81.93.255.5		spoonbill
 88.198.51.10	swan
 78.46.84.106	vireo
 140.211.166.174	vulture
-140.211.166.183	woodpecker		# !cfengine, shell access
-94.100.119.168	yellowhead		# not set up yet
-94.100.119.167	yellowhammer	# not set up yet
-94.100.119.169	yellowbishop	# not set up yet
-94.100.119.170	yellowleg		# not set up yet
+140.211.166.183	woodpecker
+94.100.119.166	yellowhead
+94.100.119.165	yellowhammer
+94.100.119.167	yellowbishop
+94.100.119.168	yellowleg

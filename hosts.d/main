@@ -8,8 +8,8 @@
 #
 
 # IPv4 and IPv6 localhost aliases
-127.0.0.1	graffiti	localhost.localdomain	localhost	dhcppc7
-::1	graffiti	localhost6.localdomain6	localhost6
+127.0.0.1	localhost.localdomain	localhost	dhcppc7
+::1			localhost6.localdomain6	localhost6
 
 #
 # Imaginary network.
