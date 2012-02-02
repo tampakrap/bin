@@ -14,7 +14,8 @@ GIT="/usr/bin/git"
 
 if [[ $1 == 'clone' ]]; then
 	if [[ $2 == "git://anongit.kde.org/"* ]] && [[ $KDE_DEVELOPER == 1 ]]; then
-		KDE_REPO=$(echo $2 | sed 's:git\://anongit.kde.org/::')
+		#KDE_REPO=$(echo $2 | sed 's:git\://anongit.kde.org/::')
+		KDE_REPO=${2/*\/}
 		$GIT "$@"
 		chown -R $USER:$USER $DISTDIR/egit-src/$KDE_REPO
 	elif [[ $2 == "git://git.overlays.gentoo.org/"* ]] && [[ $GENTOO_DEVELOPER == 1 ]];then
