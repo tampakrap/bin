@@ -9,7 +9,7 @@ import socket
 import sys
 
 serverlist = []
-hostsmodules = ['main', 'home', 'gentoo-el', 'linuxteam', 'kde', 'gentoo']
+hostsmodules = ['main', 'home', 'gentoo-el', 'suse', 'linuxteam', 'kde', 'gentoo']
 
 def fetch_gentoo_serverlist():
 	global serverlist

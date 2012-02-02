@@ -2,14 +2,14 @@
 # Simple ssh wrapper, in order to access my home servers from my laptop
 # when I am away from home
 
-SSID="xmen"
+SSID="hood"
 SSH="/usr/bin/ssh"
 ADDR="home.tampakrap.gr -p"
 SERVER1_NAME="eyedea"
-SERVER2_NAME="evidence"
-SERVER3_NAME="everlast"
 SERVER1_PORT="2107"
+SERVER2_NAME="evidence"
 SERVER2_PORT="2108"
+SERVER3_NAME="everlast"
 SERVER3_PORT="2109"
 
 CURRENT_SSID=`/sbin/iwconfig wlan0 | grep ESSID | awk -F: '{ print $2 }' | tr -d '"'`
@@ -24,6 +24,13 @@ if [[ $1 == $SERVER1_NAME ]] || [[ $1 == $SERVER2_NAME ]] || [[ $1 == $SERVER3_N
 			$SERVER2_NAME) $SSH $ADDR $SERVER2_PORT ;;
 			$SERVER3_NAME) $SSH $ADDR $SERVER3_PORT ;;
 		esac
+	fi
+elif [[ $1 == "xzibit" ]]; then
+	grep -q 10.20 /etc/resolv.conf
+	if [[ $? != 0 ]]; then
+		echo "You need to connect to SUSE VPN first"
+	else
+		$SSH $@
 	fi
 else
 	$SSH $@
