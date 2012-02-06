@@ -51,7 +51,7 @@ case $HOSTNAME in
 		;;
 
 	virtuoso)
-		REPOSITORY="/home/tampakrap/Source_Code/raekwon/scripts"
+		REPOSITORY="/home/$USER/Source_Code/raekwon/scripts"
 		SBIN="create_symlinks emerge-tmpfs host-update update"
 		BIN="create_repolinks music-sync git packagelist ssh wakeonlan"
 		HOMEDIR=1
@@ -74,7 +74,7 @@ case $HOSTNAME in
 		SBIN="create_symlinks emerge-tmpfs host-update update-notifier"
 		BIN="wakeonlan"
 		;;
-	
+
 	evidence)
 		REPOSITORY="/var/repos/scripts"
 		SBIN="create_symlinks emerge-tmpfs host-update update-notifier"
