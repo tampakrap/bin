@@ -1,9 +1,15 @@
 #!/usr/bin/env python
 # Updates the info of the gentoo servers. Also it merges files under /etc/hosts.d in /etc/hosts
 
-from BeautifulSoup import BeautifulSoup
+try:
+	from BeautifulSoup import BeautifulSoup
+except ImportError:
+	print "Please emerge -av dev-python/beautifulsoup"
 from StringIO import StringIO
-import pycurl
+try:
+	import pycurl
+except ImportError:
+	print "Please emerge -av dev-python/pycurl"
 import shutil
 import socket
 import sys
