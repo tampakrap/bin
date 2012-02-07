@@ -1,5 +1,10 @@
 #!/bin/bash
 
+if [[ ! -n $1 ]]; then
+	echo "You need to specify a number of months as argument"
+	exit
+fi
+
 MONTHS=$1
 
 for action in packages distfiles; do
