@@ -15,6 +15,17 @@ function _update() {
 
 	einfo "Update symlinks for ${HOSTNAME}"
 
+	# homedir
+	if [[ ${HOMEDIR} == 1 ]]; then
+		REPOSITORY="/home/$USER/Source_Code/raekwon/scripts"
+		[[ -L /home/$USER/.gitconfig ]] || \
+			( su -c "ln -s ${REPOSITORY}/gitconfig ~/.gitconfig" $USER && einfo "Installed .gitconfig" )
+		[[ -L /home/$USER/.ssh/config ]] || \
+			( su -c "ln -s ${REPOSITORY}/sshconfig ~/.ssh/config" $USER && einfo "Installed .ssh/config" )
+	else
+		REPOSITORY="/var/repos/scripts"
+	fi
+
 	for DESTINATION in ${DESTINATIONS}; do
 		if [[ ${DESTINATION} == "/usr/local/sbin" ]]; then
 			SCRIPTS=${SBIN}
@@ -31,17 +42,6 @@ function _update() {
 	# /etc/hosts.d
 	[[ -L /etc/hosts.d ]] || ( ln -s ${REPOSITORY}/hosts.d /etc && einfo "Installed hosts.d" )
 
-	# homedir
-	if [[ ${HOMEDIR} == 1 ]]; then
-		REPOSITORY="/home/$USER/Source_Code/raekwon/scripts"
-		[[ -L /home/$USER/.gitconfig ]] || \
-			( su -c "ln -s ${REPOSITORY}/gitconfig ~/.gitconfig" $USER && einfo "Installed .gitconfig" )
-		[[ -L /home/$USER/.ssh/config ]] || \
-			( su -c "ln -s ${REPOSITORY}/sshconfig ~/.ssh/config" $USER && einfo "Installed .ssh/config" )
-	else
-		REPOSITORY="/var/repos/scripts"
-	fi
-
 	einfo "Done"
 }
 
@@ -53,7 +53,7 @@ case $HOSTNAME in
 		;;
 
 	virtuoso)
-		SBIN="create_symlinks emerge-tmpfs host-update update"
+		SBIN="cleanup create_symlinks emerge-tmpfs host-update update"
 		BIN="create_repolinks music-sync git packagelist ssh wakeonlan"
 		HOMEDIR=1
 		;;
