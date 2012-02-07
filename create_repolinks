@@ -1,8 +1,9 @@
 #!/bin/bash
-# Script that creates symlinks from the overlay dir to the gentoo repos dir,
-# and from distdir to kde repos dir. Also, it fixes the .git/config entries
-# of those repos. It needs a in ~/.gitconfig similar to the one included in
-# this repository.
+# Script that creates symlinks from repositories, and cleans up the .git/config entries:
+# 1) For Gentoo overlays, it symlinks the repo from the overlay dir to the gentoo repos dir.
+# 2) For KDE repos, it symlinks the repo from distdir to kde repos dir.
+# 3) For SUSE repos, it replaces git user.email with the suse mail (or creates it)
+# The script needs a in ~/.gitconfig similar to the one included in this repository.
 
 # Headers
 source /etc/make.conf
@@ -12,6 +13,7 @@ source /etc/make.conf
 REPO_DIR="/home/tampakrap/Source_Code/"
 GENTOO_REPO_DIR="${REPO_DIR}gentoo/"
 KDE_REPO_DIR="${REPO_DIR}kde/"
+SUSE_REPO_DIR="${REPO_DIR}suse/"
 OVERLAY_DIR="/var/lib/layman"
 
 # No root
@@ -20,32 +22,67 @@ if [[ $UID == 0 ]]; then
 	exit 1
 fi
 
+# TODO: Find broken symlinks and remove them
+# TODO: Add non overlays to gentoo repo dir
+# TODO: Remove non-relevant repos from target repo dirs
+# TODO: If a dir exists instead of a symlink, replace
+# TODO: regexp: ($GIT_PREFIX)$URL(/)
+# |- for kde: (anon)git($NUMBER).kde.org
+# |- for gentoo: git(.overlays).gentoo.org
+
 # Gentoo Overlays
 cd $OVERLAY_DIR
+einfo "### GENTOO OVERLAYS ###"
 for repo in `ls -d */`
 do
 	pushd $repo > /dev/null
 	einfo "Checking $repo overlay"
-	if [[ ! -z `grep git.overlays.gentoo.org .git/config` ]]; then
-		sed -i -e 's:git\://git.overlays.gentoo.org/:gentoo\::' .git/config
-		ewarn "gentoo git url corrected for $repo overlay"
+	if grep -q git.overlays.gentoo.org .git/config; then
+		sed -i \
+			-e "s:git\://git.overlays.gentoo.org/:gentoo\::" \
+			-e "s:git@git.overlays.gentoo.org:gentoo:" .git/config && ewarn "gentoo git url corrected for $repo overlay"
 	fi
-	[[ -L ${GENTOO_REPO_DIR}${repo%/*} ]] || (ln -s /var/lib/layman/$repo ${GENTOO_REPO_DIR} && ewarn "New symlink for $repo overlay")
+	[[ -L ${GENTOO_REPO_DIR}${repo%/*} ]] || ( ln -s /var/lib/layman/$repo ${GENTOO_REPO_DIR} && ewarn "New symlink for $repo overlay" )
 	popd > /dev/null
 done
 
+# Gentoo Repositories
+# TODO
+
 # KDE Repositories
 cd $DISTDIR/egit-src
+einfo "### KDE REPOS ###"
 for repo in `ls -d */`
 do
 	pushd $repo > /dev/null
-	einfo "Checking $repo repository"
-	if [[ ! -z `grep anongit.kde.org .git/config` ]]; then
-		sed -i -e 's:git\://anongit.kde.org:kde\::' .git/config
-		ewarn "kde git url corrected for $repo"
-	fi
-	if [[ ! -z `grep kde: .git/config` ]]; then
-		[[ -L ${KDE_REPO_DIR}${repo%/*} ]] || (ln -s ${DISTDIR}/egit-src/$repo ${KDE_REPO_DIR} && ewarn "New symlink for $repo")
+	if grep -q -e git.kde.org -e kde: .git/config; then
+		einfo "Checking $repo repository"
+		if grep -q git.kde.org .git/config; then
+			sed -i \
+				-e "s:git\://anongit.kde.org/:kde\::" \
+				-e "s:git\://git.kde.org/:kde\::" \
+				-e "s:git@git.kde.org:kde:" .git/config && ewarn "kde git url corrected for $repo"
+		fi
+		if grep -q kde: .git/config && [[ ! -L ${KDE_REPO_DIR}${repo%/*} ]]; then
+			ln -s ${DISTDIR}/egit-src/$repo ${KDE_REPO_DIR} && ewarn "New symlink for $repo"
+		fi
 	fi
 	popd > /dev/null
+done
+
+# SUSE Repositories
+cd $SUSE_REPO_DIR
+einfo "### SUSE REPOS ###"
+for repo in `ls -d */`
+do
+	if [[ -d $repo/.git ]]; then
+		pushd $repo > /dev/null
+		einfo "Checking $repo repository"
+		REPO_GIT_EMAIL=`grep email .git/config | awk -F'= ' '{ print $2 }'`
+		if [[ -n $REPO_GIT_EMAIL ]] && [[ $REPO_GIT_EMAIL != "tchatzimichos@suse.com" ]]; then
+			sed -i -e "s:${REPO_GIT_EMAIL}:tchatzimichos@suse.com:" .git/config && ewarn "Corrected SUSE mail for $repo"
+		fi
+		[[ ! -n $REPO_GIT_EMAIL ]] && ( git config user.email "tchatzimichos@suse.com" && ewarn "Corrected SUSE mail for $repo" )
+		popd > /dev/null
+	fi
 done
