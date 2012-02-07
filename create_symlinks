@@ -27,16 +27,19 @@ function _update() {
 			einfo "New script ${script} installed in ${DESTINATION}" )
 		done
 	done
-	
+
 	# /etc/hosts.d
 	[[ -L /etc/hosts.d ]] || ( ln -s ${REPOSITORY}/hosts.d /etc && einfo "Installed hosts.d" )
-	
+
 	# homedir
 	if [[ ${HOMEDIR} == 1 ]]; then
+		REPOSITORY="/home/$USER/Source_Code/raekwon/scripts"
 		[[ -L /home/$USER/.gitconfig ]] || \
 			( su -c "ln -s ${REPOSITORY}/gitconfig ~/.gitconfig" $USER && einfo "Installed .gitconfig" )
 		[[ -L /home/$USER/.ssh/config ]] || \
 			( su -c "ln -s ${REPOSITORY}/sshconfig ~/.ssh/config" $USER && einfo "Installed .ssh/config" )
+	else
+		REPOSITORY="/var/repos/scripts"
 	fi
 
 	einfo "Done"
@@ -44,42 +47,48 @@ function _update() {
 
 case $HOSTNAME in
 	canibus)
-		REPOSITORY="/home/$USER/Source_Code/raekwon/scripts"
 		SBIN="create_symlinks emerge-tmpfs host-update update"
 		BIN="create_repolinks git packagelist wakeonlan"
 		HOMEDIR=1
 		;;
 
 	virtuoso)
-		REPOSITORY="/home/$USER/Source_Code/raekwon/scripts"
 		SBIN="create_symlinks emerge-tmpfs host-update update"
 		BIN="create_repolinks music-sync git packagelist ssh wakeonlan"
 		HOMEDIR=1
 		;;
 
 	madlib)
-		REPOSITORY="/var/repos/scripts"
 		SBIN="create_symlinks emerge-tmpfs host-update update"
 		BIN="wakeonlan"
 		;;
 
 	eyedea)
-		REPOSITORY="/var/repos/scripts"
 		SBIN="create_symlinks emerge-tmpfs host-update update-notifier"
 		BIN="wakeonlan"
 		;;
 
 	evidence)
-		REPOSITORY="/var/repos/scripts"
 		SBIN="create_symlinks emerge-tmpfs host-update update-notifier"
 		BIN="wakeonlan"
 		;;
 
 	evidence)
-		REPOSITORY="/var/repos/scripts"
 		SBIN="create_symlinks emerge-tmpfs host-update update-notifier"
 		BIN="wakeonlan"
 		;;
+
+# TODO: Intergrate the following hosts
+#	raekwon)
+#		SBIN=""
+#		BIN=""
+#		;;
+
+#	xzibit)
+#		SBIN=""
+#		BIN=""
+#		HOMEDIR=1
+#		;;
 
 	*)
 		ewarn "${HOSTNAME} not found, terminating"
