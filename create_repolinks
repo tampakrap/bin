@@ -17,18 +17,15 @@ KDE_REPO_DIR="${REPO_DIR}kde/"
 SUSE_REPO_DIR="${REPO_DIR}suse/"
 OVERLAY_DIR="/var/lib/layman/"
 
-# No root
 if [[ $UID == 0 ]]; then
 	eerror 'root is forbidden'
 	exit 1
 fi
 
 # TODO: Find broken symlinks and remove them
-# TODO: If a dir exists instead of a symlink, replace
 
-# Gentoo Overlays
-cd $OVERLAY_DIR
 einfo "### GENTOO OVERLAYS ###"
+cd $OVERLAY_DIR
 for repo in `ls -d */`; do
 	repo=${repo%/}
 	pushd $repo > /dev/null
@@ -37,13 +34,15 @@ for repo in `ls -d */`; do
 		sed -i -r "s#[^[:space:]]*git[[:digit:]]?.(overlays.)?gentoo.org[/:]#gentoo:#g" .git/config &&
 		ewarn "Gentoo Git URL corrected for $repo overlay"
 	fi
-	[[ -L ${GENTOO_REPO_DIR}$repo ]] || ( ln -s ${OVERLAY_DIR}$repo ${GENTOO_REPO_DIR} && ewarn "New symlink for $repo overlay" )
+	[[ -L ${GENTOO_REPO_DIR}$repo ]] || ( \
+		rm -rf ${GENTOO_REPO_DIR}$repo &&
+		ln -s ${OVERLAY_DIR}$repo ${GENTOO_REPO_DIR} &&
+		ewarn "New symlink for $repo overlay" )
 	popd > /dev/null
 done
 
-# Gentoo Repositories
-cd $DISTDIR/egit-src
 einfo "### GENTOO REPOS ###"
+cd $DISTDIR/egit-src
 for repo in `ls -d */`; do
 	if grep -q -e gentoo.org -e gentoo: $repo.git/config; then
 		repo=${repo%/}
@@ -53,14 +52,16 @@ for repo in `ls -d */`; do
 			sed -i -r "s#[^[:space:]]*git[[:digit:]]?.(overlays.)?gentoo.org[/:]#gentoo:#g" .git/config &&
 			ewarn "Gentoo Git URL corrected for $repo repository"
 		fi
-		[[ -L ${GENTOO_REPO_DIR}$repo ]] || ( ln -s ${DISTDIR}/egit-src/$repo ${GENTOO_REPO_DIR} && ewarn "New symlink for $repo repository" )
+		[[ -L ${GENTOO_REPO_DIR}$repo ]] || ( \
+			rm -rf ${GENTOO_REPO_DIR}$repo && 
+			ln -s ${DISTDIR}/egit-src/$repo ${GENTOO_REPO_DIR} && 
+			ewarn "New symlink for $repo repository" )
 		popd > /dev/null
 	fi
 done
 
-# KDE Repositories
-cd $DISTDIR/egit-src
 einfo "### KDE REPOS ###"
+cd $DISTDIR/egit-src
 for repo in `ls -d */`; do
 	if grep -q -e kde.org -e kde: $repo.git/config; then
 		repo=${repo%/}
@@ -70,14 +71,16 @@ for repo in `ls -d */`; do
 			sed -i -r "s#[^[:space:]]*git[[:digit:]]?.kde.org[/:]#kde:#g'" .git/config &&
 			ewarn "KDE Git URL corrected for $repo"
 		fi
-		[[ -L ${KDE_REPO_DIR}$repo ]] || ( ln -s ${DISTDIR}/egit-src/$repo ${KDE_REPO_DIR} && ewarn "New symlink for $repo repository" )
+		[[ -L ${KDE_REPO_DIR}$repo ]] || ( \
+			rm -rf ${KDE_REPO_DIR}$repo &&
+			ln -s ${DISTDIR}/egit-src/$repo ${KDE_REPO_DIR} &&
+			ewarn "New symlink for $repo repository" )
 		popd > /dev/null
 	fi
 done
 
-# SUSE Repositories
-cd $SUSE_REPO_DIR
 einfo "### SUSE REPOS ###"
+cd $SUSE_REPO_DIR
 for repo in `ls -d */`; do
 	repo=${repo%/}
 	if [[ -d $repo/.git ]]; then
@@ -85,9 +88,12 @@ for repo in `ls -d */`; do
 		einfo "Checking $repo repository"
 		REPO_GIT_EMAIL=`grep email .git/config | awk -F'= ' '{ print $2 }'`
 		if [[ -n $REPO_GIT_EMAIL ]] && [[ $REPO_GIT_EMAIL != "tchatzimichos@suse.com" ]]; then
-			sed -i -e "s:${REPO_GIT_EMAIL}:tchatzimichos@suse.com:" .git/config && ewarn "Corrected SUSE mail for $repo repository"
+			sed -i -e "s:${REPO_GIT_EMAIL}:tchatzimichos@suse.com:" .git/config &&
+			ewarn "Corrected SUSE mail for $repo repository"
 		fi
-		[[ ! -n $REPO_GIT_EMAIL ]] && ( git config user.email "tchatzimichos@suse.com" && ewarn "Corrected SUSE mail for $repo repository" )
+		[[ ! -n $REPO_GIT_EMAIL ]] && ( \
+			git config user.email "tchatzimichos@suse.com" &&
+			ewarn "Corrected SUSE mail for $repo repository" )
 		popd > /dev/null
 	fi
 done
