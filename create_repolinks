@@ -22,8 +22,6 @@ if [[ $UID == 0 ]]; then
 	exit 1
 fi
 
-# TODO: Find broken symlinks and remove them
-
 einfo "### GENTOO OVERLAYS ###"
 cd $OVERLAY_DIR
 for repo in `ls -d */`; do
@@ -96,4 +94,16 @@ for repo in `ls -d */`; do
 			ewarn "Corrected SUSE mail for $repo repository" )
 		popd > /dev/null
 	fi
+done
+
+einfo "### CLEANUP BAD SYMLINKS ###"
+for dir in ${GENTOO_REPO_DIR} ${KDE_REPO_DIR}; do
+	cd $dir
+	for item in `ls -1`; do
+		if [[ -L $item ]] && ! pushd $item > /dev/null 2>&1; then
+			rm $item && ewarn "Removed bad symlink $item"
+		else
+			popd > /dev/null 2>&1
+		fi
+	done
 done
