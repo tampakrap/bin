@@ -1,24 +1,21 @@
-Host svn.kde.org
-	User theoc
+# KDE
+Host kdesvn svn.kde.org
+User theoc
 
-Host ktown
-	Hostname ktown.kde.org
-	User ftpgentoo
+Host ftpmaster.kde.org ftpmaster
+User ftpgentoo
 
-Host ftpmaster
-	Hostname ftpmaster.kde.org
-	User ftpgentoo
-
+# LinuxTeam
 Host tyranus
-	User linuxteam
-	Port 3030
+User linuxteam
+Port 3030
 
 Host vectivus
-	Port 3031
+Port 3031
 
 Host bane
-	Port 3032
+Port 3032
 
-Host infernus
-	Hostname infernus.tomkap.gr
-	User gentoo
+# Gentoo-el
+Host infernus infernus.tomkap.gr
+User gentoo
