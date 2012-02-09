@@ -3,8 +3,21 @@
 
 . /etc/init.d/functions.sh
 
-pquery --herd=kde --herd=qt --raw --repo $(portageq portdir)  -n | grep -v kde-base | grep -v kde-misc | grep -v x11-libs/qt* | sort -u > /tmp/packagelisttmp
-cat /tmp/packagelisttmp | while read i; do p="$p|$i"; echo "kde-base*|kde-misc*|x11-libs/qt*$p" > /tmp/packagelistfinal; done
+pquery --herd=kde --herd=qt --herd=planet --raw --repo $(portageq portdir) -n | \
+	grep -v -E "kde|qt|Qt|zip|noia|msn|dbus|tea|kmidimon|kst|ebook" | sort -u > /tmp/packagelisttmp1
+cat /tmp/packagelisttmp1 | \
+	while read i; do 
+		i="${i##*/}"
+		i="${i%%-*}"
+		if [[ $i == lib* ]]; then
+			echo $i | sed "s:lib::" >> /tmp/packagelisttmp2
+		else
+			echo $i >> /tmp/packagelisttmp2
+		fi
+	done
+echo "kde\nqt\ndbus" >> /tmp/packagelisttmp2
+sort -u /tmp/packagelisttmp2 > /tmp/packagelisttmp3
+cat /tmp/packagelisttmp3 | while read i; do p="$p|$i"; echo "$p" > /tmp/packagelistfinal; done
 einfo "list of packages"
 cat /tmp/packagelistfinal
-#rm /tmp/packagelist*
+rm /tmp/packagelist*
