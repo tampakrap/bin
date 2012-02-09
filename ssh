@@ -37,8 +37,7 @@ if [[ ! -n $CURRENT_SSID ]]; then
 	case $CURRENT_IP in
 		"192.168.2") HOME_GR=1 ;;
 		"192.168.11") HOME_CZ=1 ;;
-		10.[12]0.*) SUSE=1 ;;
-		#if grep -q 10.[12]0 /etc/resolv.conf; then SUSE=1; fi
+		10.[12]0.*) SUSE=1 ;; 
 	esac
 fi
 
