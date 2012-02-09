@@ -15,7 +15,7 @@ cat /tmp/packagelisttmp1 | \
 			echo $i >> /tmp/packagelisttmp2
 		fi
 	done
-echo "kde\nqt\ndbus" >> /tmp/packagelisttmp2
+echo -e "kde\nqt\ndbus" >> /tmp/packagelisttmp2
 sort -u /tmp/packagelisttmp2 > /tmp/packagelisttmp3
 cat /tmp/packagelisttmp3 | while read i; do p="$p|$i"; echo "$p" > /tmp/packagelistfinal; done
 einfo "list of packages"
