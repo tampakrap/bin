@@ -91,7 +91,7 @@ for repo in `ls -d */`; do
 		fi
 		[[ ! -n $REPO_GIT_EMAIL ]] && ( \
 			git config user.email "tchatzimichos@suse.com" &&
-			ewarn "Corrected SUSE mail for $repo repository" )
+			ewarn "Added SUSE mail for $repo repository" )
 		popd > /dev/null
 	fi
 done
