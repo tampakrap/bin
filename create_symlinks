@@ -34,8 +34,8 @@ function _update() {
 		fi
 		for script in ${SCRIPTS}; do
 			[[ -L ${DESTINATION}/${script} ]] || \
-			( ln -s ${REPOSITORY}/${script} ${DESTINATION} && \
-			einfo "New script ${script} installed in ${DESTINATION}" )
+				( ln -s ${REPOSITORY}/${script} ${DESTINATION} && 
+				einfo "New script ${script} installed in ${DESTINATION}" )
 		done
 	done
 
@@ -73,7 +73,7 @@ case $HOSTNAME in
 		BIN="wakeonlan"
 		;;
 
-	evidence)
+	everlast)
 		SBIN="create_symlinks emerge-tmpfs host-update update-notifier"
 		BIN="wakeonlan"
 		;;
