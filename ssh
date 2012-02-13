@@ -17,7 +17,9 @@ SERVER2_PORT="2108"
 SERVER3_NAME="everlast"
 SERVER3_PORT="2109"
 
-# Check if the current machine is desktop or laptop, and if it is inside HOME_GR, HOME_CZ or SUSE
+# In the next two if blocks:
+# 1) Check if the current machine is connected through ethernet or wireless
+# 2) Check if it is inside HOME_GR, HOME_CZ or SUSE
 if [[ -a /sbin/iwconfig ]]; then
 	CURRENT_SSID=`/sbin/iwconfig wlan0 | grep ESSID | awk -F: '{ print $2 }' | tr -d '"'`
 	CURRENT_SSID=${CURRENT_SSID//[[:space:]]}
@@ -39,6 +41,11 @@ if [[ ! -n $CURRENT_SSID ]]; then
 		"192.168.11") HOME_CZ=1 ;;
 		10.[12]0.*) SUSE=1 ;; 
 	esac
+fi
+
+# Check if the machine is connected to SUSE VPN
+if [[ ! -n $SUSE ]] && grep -q 10.[12]0 /etc/resolv.conf; then
+	SUSE=1
 fi
 
 # Connect to HOME_GR servers
