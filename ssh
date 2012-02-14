@@ -69,11 +69,14 @@ elif [[ $1 == "xzibit" ]]; then
 # Connect to virtuoso
 # Based on common sense:
 # 1) if I'm at work then virtuoso is at HOME_CZ
+# 2) if I'm at HOME_CZ, then virtuoso is also there
 # 2) if I'm at HOME_GR, then virtuoso is also there
 elif [[ $1 == "virtuoso" ]]; then
-	if [[ -n $HOME_GR ]]; then
-		$SSH 192.168.2.102
-	else
+	if [[ -n $SUSE ]]; then
+		$SSH prague.tampakrap.gr
+	elif [[ -n $HOME_GR ]]; then
+		$SSH 192.168.1.102
+	elif [[ -n $HOME_CZ ]]; then
 		$SSH 192.168.11.102
 	fi
 else
