@@ -1,10 +1,6 @@
 #!/usr/bin/env python
 # Updates the info of the gentoo servers. Also it merges files under /etc/hosts.d in /etc/hosts
 
-### TODO ###
-# Check if /etc/hosts.d symlink exists first
-######
-
 try:
 	from BeautifulSoup import BeautifulSoup
 except ImportError:
@@ -19,6 +15,7 @@ except ImportError:
 import shutil
 import socket
 import sys
+import os
 
 serverlist = []
 hostsmodules = ['main', 'home-gr', 'home-cz', 'gentoo-el', 'suse', 'linuxteam', 'kde', 'gentoo']
@@ -62,6 +59,17 @@ def merge_hosts_modules():
 	f.close()
 
 def main():
+	# Check if /etc/hosts.d is a symlink
+	if not os.path.islink('/etc/hosts.d'):
+		print "/etc/hosts.d is not a symlink or doesn't exist, please run create_symlinks first"
+		exit(1)
+	# Check if the symlink is valid
+	try:
+		os.stat('/etc/hosts.d')
+	except OSError:
+		print "/etc/hosts.d symlink is broken, please fix that first"
+		exit(1)
+	# Update the content
 	try:
 		if sys.argv[1] == 'gentoo':
 			fetch_gentoo_serverlist()
