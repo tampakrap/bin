@@ -66,7 +66,7 @@ for repo in `ls -d */`; do
 		pushd $repo > /dev/null
 		einfo "Checking $repo repository"
 		if grep -q kde.org .git/config; then
-			sed -i -r "s#[^[:space:]]*git[[:digit:]]?.kde.org[/:]#kde:#g'" .git/config &&
+			sed -i -r "s#[^[:space:]]*git[[:digit:]]?.kde.org[/:]#kde:#g" .git/config &&
 			ewarn "KDE Git URL corrected for $repo"
 		fi
 		[[ -L ${KDE_REPO_DIR}$repo ]] || ( \
@@ -79,7 +79,7 @@ done
 
 einfo "### SUSE REPOS ###"
 cd $SUSE_REPO_DIR
-for repo in `ls -d */`; do
+for repo in `ls -d */` `ls -d tampakrap/*/`; do
 	repo=${repo%/}
 	if [[ -d $repo/.git ]]; then
 		pushd $repo > /dev/null
