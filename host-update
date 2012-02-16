@@ -16,6 +16,7 @@ import shutil
 import socket
 import sys
 import os
+import re
 
 serverlist = []
 hostsmodules = ['main', 'home-gr', 'home-cz', 'gentoo-el', 'suse', 'linuxteam', 'kde', 'gentoo']
@@ -60,6 +61,17 @@ def merge_hosts_modules():
 		shutil.copyfileobj(open('/etc/hosts.d/%s' % hostfile, 'r'), f)
 	f.close()
 
+def hostname_main_hosts_module():
+	# Replaces CURRENT_HOST with $HOSTNAME in main module
+	prev_file = open("/etc/hosts.d/main").readlines()
+	i = 0
+	for line in prev_file:
+		prev_file[i] = line.replace("CURRENT_HOST", os.uname()[1])
+		i = i + 1
+	next_file = open("/etc/hosts.d/main", 'w')
+	next_file.writelines(prev_file)
+	next_file.close()
+
 def main():
 	# Check if /etc/hosts.d is a symlink
 	if not os.path.islink('/etc/hosts.d'):
@@ -81,6 +93,7 @@ def main():
 			update_hosts_module(sys.argv[1])
 	except IndexError:
 		pass
+	hostname_main_hosts_module()
 	merge_hosts_modules()
 
 if __name__ == '__main__':
