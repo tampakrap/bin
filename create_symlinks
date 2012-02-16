@@ -27,9 +27,7 @@ function _update() {
 	fi
 
 	# Include scripts from work repository
-	if [[ ${WORK} == 1 ]]; then
-		WORK_REPOSITORY="/home/$USER/Source_Code/suse/$USER/scripts"
-	fi
+	[[ -n ${WORK} ]] && WORK_REPOSITORY="/home/$USER/Source_Code/suse/$USER/scripts"
 
 	# Install the scripts
 	for DESTINATION in ${DESTINATIONS}; do
@@ -43,16 +41,18 @@ function _update() {
 				[[ -L ${DESTINATION}/${script} ]] || \
 				( ln -s ${REPOSITORY}/${script} ${DESTINATION} && 
 				ewarn "New script ${script} installed in ${DESTINATION}" )
-			elif [[ -f ${WORK_REPOSITORY}/${script} ]]; then
+			elif [[ -n ${WORK} ]] && [[ -f ${WORK_REPOSITORY}/${script} ]]; then
 				[[ -L ${DESTINATION}/${script} ]] || \
 				( ln -s ${WORK_REPOSITORY}/${script} ${DESTINATION} &&
 				ewarn "New script ${script} installed in ${DESTINATION}" )
 			fi
 		done
+		# Install additional work scripts that don't reside in WORK_REPOSITORY
+		[[ -n ${WORK} ]] && ${WORK_REPOSITORY}/create_work_symlinks
 	done
 
 	# /etc/hosts.d
-	[[ -L /etc/hosts.d ]] || ( ln -s ${REPOSITORY}/hosts.d /etc && einfo "Installed hosts.d" )
+	[[ -L /etc/hosts.d ]] || ( ln -s ${REPOSITORY}/hosts.d /etc && ewarn "Installed hosts.d" )
 
 	einfo "Done"
 }
