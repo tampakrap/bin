@@ -15,7 +15,7 @@ function _update() {
 
 	einfo "Update symlinks for ${HOSTNAME}"
 
-	# homedir
+	# Desktop / Laptop
 	if [[ ${HOMEDIR} == 1 ]]; then
 		REPOSITORY="/home/$USER/Source_Code/raekwon/scripts"
 		[[ -L /home/$USER/.gitconfig ]] || \
@@ -26,6 +26,12 @@ function _update() {
 		REPOSITORY="/var/repos/scripts"
 	fi
 
+	# Include scripts from work repository
+	if [[ ${WORK} == 1 ]]; then
+		WORK_REPOSITORY="/home/$USER/Source_Code/suse/$USER/scripts"
+	fi
+
+	# Install the scripts
 	for DESTINATION in ${DESTINATIONS}; do
 		if [[ ${DESTINATION} == "/usr/local/sbin" ]]; then
 			SCRIPTS=${SBIN}
@@ -33,9 +39,15 @@ function _update() {
 			SCRIPTS=${BIN}
 		fi
 		for script in ${SCRIPTS}; do
-			[[ -L ${DESTINATION}/${script} ]] || \
+			if [[ -f ${REPOSITORY}/${script} ]]; then
+				[[ -L ${DESTINATION}/${script} ]] || \
 				( ln -s ${REPOSITORY}/${script} ${DESTINATION} && 
-				einfo "New script ${script} installed in ${DESTINATION}" )
+				ewarn "New script ${script} installed in ${DESTINATION}" )
+			elif [[ -f ${WORK_REPOSITORY}/${script} ]]; then
+				[[ -L ${DESTINATION}/${script} ]] || \
+				( ln -s ${WORK_REPOSITORY}/${script} ${DESTINATION} &&
+				ewarn "New script ${script} installed in ${DESTINATION}" )
+			fi
 		done
 	done
 
@@ -56,6 +68,7 @@ case $HOSTNAME in
 		SBIN="cleanup create_symlinks emerge-tmpfs host-update update"
 		BIN="create_repolinks music-sync git packagelist ssh wakeonlan"
 		HOMEDIR=1
+		WORK=1
 		;;
 
 	madlib)
@@ -84,14 +97,15 @@ case $HOSTNAME in
 #		BIN=""
 #		;;
 
-#	xzibit)
-#		SBIN=""
-#		BIN=""
-#		HOMEDIR=1
-#		;;
+	xzibit)
+		SBIN="cleanup create_symlinks emerge-tmpfs host-update update"
+		BIN="create_repolinks get-swamp-id git packagelist ssh wakeonlan"
+		HOMEDIR=1
+		WORK=1
+		;;
 
 	*)
-		ewarn "${HOSTNAME} not found, terminating"
+		eerror "${HOSTNAME} not found, terminating"
 		exit 1
 esac
 
