@@ -1,3 +1,3 @@
 # /etc/hosts: Local Host Database
-127.0.0.1   localhost CURRENT_HOST
-::1         localhost6
+127.0.0.1       localhost CURRENT_HOST
+::1             localhost6
