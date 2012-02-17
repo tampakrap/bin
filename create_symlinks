@@ -15,7 +15,7 @@ function _update() {
 
 	einfo "Update symlinks for ${HOSTNAME}"
 
-	# Desktop / Laptop
+	# Desktop/Laptop OR Server
 	if [[ ${HOMEDIR} == 1 ]]; then
 		REPOSITORY="/home/$USER/Source_Code/raekwon/scripts"
 		[[ -L /home/$USER/.gitconfig ]] || \
@@ -24,6 +24,9 @@ function _update() {
 			( su -c "ln -s ${REPOSITORY}/sshconfig ~/.ssh/config" $USER && einfo "Installed .ssh/config" )
 	else
 		REPOSITORY="/var/repos/scripts"
+		pushd $REPOSITORY > /dev/null 2>&1
+		git pull
+		popd > /dev/null 2>&1
 	fi
 
 	# Include scripts from work repository
