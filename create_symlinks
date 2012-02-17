@@ -62,8 +62,8 @@ function _update() {
 
 case $HOSTNAME in
 	canibus)
-		SBIN="create_symlinks emerge-tmpfs host-update update"
-		BIN="create_repolinks git packagelist wakeonlan"
+		SBIN="cleanup create_symlinks emerge-tmpfs host-update update"
+		BIN="create_repolinks git packagelist ssh wakeonlan"
 		HOMEDIR=1
 		;;
 
@@ -75,30 +75,29 @@ case $HOSTNAME in
 		;;
 
 	madlib)
-		SBIN="create_symlinks emerge-tmpfs host-update update"
+		SBIN="cleanup create_symlinks emerge-tmpfs host-update update"
 		BIN="wakeonlan"
 		;;
 
 	eyedea)
-		SBIN="create_symlinks emerge-tmpfs host-update update-notifier"
+		SBIN="cleanup create_symlinks emerge-tmpfs host-update update-notifier"
 		BIN="wakeonlan"
 		;;
 
 	evidence)
-		SBIN="create_symlinks emerge-tmpfs host-update update-notifier"
+		SBIN="cleanup create_symlinks emerge-tmpfs host-update update-notifier"
 		BIN="wakeonlan"
 		;;
 
 	everlast)
-		SBIN="create_symlinks emerge-tmpfs host-update update-notifier"
+		SBIN="cleanup create_symlinks emerge-tmpfs host-update update-notifier"
 		BIN="wakeonlan"
 		;;
 
-# TODO: Intergrate the following hosts
-#	raekwon)
-#		SBIN=""
-#		BIN=""
-#		;;
+	raekwon)
+		SBIN="cleanup create_symlinks emerge-tmpfs host-update update-notifier"
+		BIN="wakeonlan"
+		;;
 
 	xzibit)
 		SBIN="cleanup create_symlinks emerge-tmpfs host-update update"
