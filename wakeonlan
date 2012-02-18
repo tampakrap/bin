@@ -8,10 +8,10 @@ case $1 in
 		MAC="00:1B:FC:D4:DD:DE"
 		;;
 	virtuoso)
-		MAC="00-16-EA-E7-74-68"
+		MAC="00:16:EA:E7:74:68"
 		;;
 	apathy)
-		MAC="B0-D0-9C-17-A1-2C"
+		MAC="B0:D0:9C:17:A1:2C"
 		;;
 	madlib)
 		;;
@@ -19,7 +19,7 @@ case $1 in
 		MAC="08:00:36:36:2B:04"
 		;;
 	evidence)
-		MAC="00:E0:4d:03:7E:50"
+		MAC="00:E0:4D:03:7E:50"
 		;;
 	everlast)
 		MAC="00:50:FC:FA:05:C9"
