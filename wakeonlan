@@ -2,9 +2,16 @@
 # wakeonlan wrapper for my boxes
 
 . /etc/init.d/functions.sh
+
 case $1 in
 	canibus)
 		MAC="00:1B:FC:D4:DD:DE"
+		;;
+	virtuoso)
+		MAC="00-16-EA-E7-74-68"
+		;;
+	apathy)
+		MAC="B0-D0-9C-17-A1-2C"
 		;;
 	madlib)
 		;;
