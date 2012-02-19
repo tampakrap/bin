@@ -17,7 +17,7 @@ function _install_file() {
 	[[ -n $BROKEN ]] || [[ ! -L ${DESTINATION}/${TARGET} ]] && \
 		rm ${DESTINATION}/${TARGET}
 	[[ -L ${DESTINATION}/${TARGET} ]] || \
-		( ln -s ${REPOSITORY}/${FILE} ${DESTINATION}/${TARGET} && \
+		( ln -s ${SOURCE_DIR}/${FILE} ${DESTINATION}/${TARGET} && \
 		ewarn "Installed ${DESTINATION}/${TARGET}" )
 }
 
@@ -48,9 +48,11 @@ function _update_scripts() {
 		fi
 		for FILE in ${SCRIPTS}; do
 			TARGET=${FILE}
-			if [[ -f ${REPOSITORY}/${FILE} ]]; then
+			if [[ -f ${REPOSITORY}/${TARGET} ]]; then
+                SOURCE_DIR="${REPOSITORY}"
 				_install_file
-			elif [[ -n ${WORK} ]] && [[ -f ${WORK_REPOSITORY}/${FILE} ]]; then
+			elif [[ -n ${WORK} ]] && [[ -f ${WORK_REPOSITORY}/${TARGET} ]]; then
+                SOURCE_DIR="${WORK_REPOSITORY}"
 				_install_file
 			fi
 		done
@@ -67,7 +69,7 @@ function _update_scripts() {
 function _update_configs() {
 	einfo "Updating configs for ${HOSTNAME}"
 
-	REPOSITORY="${REPOSITORY}/configs"
+	SOURCE_DIR="${REPOSITORY}/configs"
 	for FILE in `ls ${REPOSITORY}`; do
 		case $FILE in
 			user.*)
