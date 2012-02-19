@@ -66,6 +66,7 @@ function _update_configs() {
 					DESTINATION="/home/$USER"
 					case $FILE in
 						user.ssh) TARGET=".ssh/config" ;;
+                        user.gpg-agent.conf) TARGET=".gnupg/gpg-agent.conf" ;;
 						*) TARGET=".${FILE##*.}" ;;
 					esac
 				fi
