@@ -61,14 +61,14 @@ def merge_hosts_modules():
 		shutil.copyfileobj(open('/etc/hosts.d/%s' % hostfile, 'r'), f)
 	f.close()
 
-def hostname_main_hosts_module():
-	# Replaces CURRENT_HOST with $HOSTNAME in main module
-	prev_file = open("/etc/hosts.d/main").readlines()
+def hostname_replace_merged_file():
+	# Replaces CURRENT_HOST with $HOSTNAME in the merged file
+	prev_file = open("/etc/hosts").readlines()
 	i = 0
 	for line in prev_file:
 		prev_file[i] = line.replace("CURRENT_HOST", os.uname()[1])
 		i = i + 1
-	next_file = open("/etc/hosts.d/main", 'w')
+	next_file = open("/etc/hosts", 'w')
 	next_file.writelines(prev_file)
 	next_file.close()
 
@@ -93,8 +93,8 @@ def main():
 			update_hosts_module(sys.argv[1])
 	except IndexError:
 		pass
-	hostname_main_hosts_module()
 	merge_hosts_modules()
+	hostname_replace_merged_file()
 
 if __name__ == '__main__':
 	main()
