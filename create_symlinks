@@ -12,10 +12,12 @@ USER="tampakrap"
 
 function _install_file() {
 	local BROKEN
-	[[ -L ${DESTINATION}/${TARGET} ]] && \
+	if [[ -L ${DESTINATION}/${TARGET} ]]; then
 		BROKEN=$(find ${DESTINATION}/${TARGET} -type l -follow 2>/dev/null)
-	[[ -n $BROKEN ]] || [[ ! -L ${DESTINATION}/${TARGET} ]] && \
-		rm ${DESTINATION}/${TARGET}
+    else
+        [[ -f ${DESTINATION}/${TARGET} ]] && BROKEN=1
+    fi
+    [[ -n $BROKEN ]] && rm ${DESTINATION}/${TARGET}
 	[[ -L ${DESTINATION}/${TARGET} ]] || \
 		( ln -s ${SOURCE_DIR}/${FILE} ${DESTINATION}/${TARGET} && \
 		ewarn "Installed ${DESTINATION}/${TARGET}" )
@@ -70,7 +72,7 @@ function _update_configs() {
 	einfo "Updating configs for ${HOSTNAME}"
 
 	SOURCE_DIR="${REPOSITORY}/configs"
-	for FILE in `ls ${REPOSITORY}`; do
+	for FILE in `ls ${SOURCE_DIR}`; do
 		case $FILE in
 			user.*)
 				if [[ -n ${HOMEDIR} ]]; then
