@@ -19,7 +19,7 @@ import os
 import re
 
 serverlist = []
-hostsmodules = ['main', 'home-gr', 'home-cz', 'gentoo-el', 'suse', 'linuxteam', 'kde', 'gentoo']
+hostsmodules = ['base', 'home-gr', 'home-cz', 'gentoo-el', 'suse', 'linuxteam', 'kde', 'gentoo']
 
 def fetch_gentoo_serverlist():
 	# Fetches the Gentoo servers' names and puts them in the serverlist array
