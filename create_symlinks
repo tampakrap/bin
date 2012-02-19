@@ -14,7 +14,8 @@ function _install_file() {
 	local BROKEN
 	[[ -L ${DESTINATION}/${TARGET} ]] && \
 		BROKEN=$(find ${DESTINATION}/${TARGET} -type l -follow 2>/dev/null)
-	[[ -n $BROKEN ]] && rm ${DESTINATION}/${TARGET}
+	[[ -n $BROKEN ]] || [[ -f ${DESTINATION}/${TARGET} ]] \
+		&& rm ${DESTINATION}/${TARGET}
 	[[ -L ${DESTINATION}/${TARGET} ]] || \
 		( ln -s ${REPOSITORY}/${FILE} ${DESTINATION}/${TARGET} && \
 		ewarn "Installed ${DESTINATION}/${TARGET}" )
@@ -102,46 +103,38 @@ case $HOSTNAME in
 		BIN="create_repolinks git packagelist ssh wakeonlan"
 		HOMEDIR=1
 		;;
-
 	virtuoso)
 		SBIN="cleanup create_symlinks emerge-tmpfs host-update update"
 		BIN="create_repolinks music-sync git packagelist ssh wakeonlan"
 		HOMEDIR=1
 		WORK=1
 		;;
-
 	madlib)
 		SBIN="cleanup create_symlinks emerge-tmpfs host-update update"
 		BIN="wakeonlan"
 		;;
-
 	eyedea)
 		SBIN="cleanup create_symlinks emerge-tmpfs host-update update-notifier"
 		BIN="wakeonlan"
 		;;
-
 	evidence)
 		SBIN="cleanup create_symlinks emerge-tmpfs host-update update-notifier"
 		BIN="wakeonlan"
 		;;
-
 	everlast)
 		SBIN="cleanup create_symlinks emerge-tmpfs host-update update-notifier"
 		BIN="wakeonlan"
 		;;
-
 	raekwon)
 		SBIN="cleanup create_symlinks emerge-tmpfs host-update update-notifier"
 		BIN="wakeonlan"
 		;;
-
 	xzibit)
 		SBIN="cleanup create_symlinks emerge-tmpfs host-update update"
 		BIN="create_repolinks get-swamp-id git packagelist ssh wakeonlan"
 		HOMEDIR=1
 		WORK=1
 		;;
-
 	*)
 		eerror "${HOSTNAME} not found, terminating"
 		exit 1
