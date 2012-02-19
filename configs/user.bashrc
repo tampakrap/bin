@@ -17,6 +17,6 @@ fi
 
 # Put your fun stuff here.
 export ECHANGELOG_USER="Theo Chatzimichos <tampakrap@gentoo.org>"
-eval `keychain --eval --agents ssh,gpg id_dsa 57DC0078`
+eval `keychain --eval --agents ssh id_rsa id_dsa`
 PAGER=/usr/bin/less
 EDITOR=/usr/bin/vim
