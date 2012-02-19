@@ -24,9 +24,9 @@ function _repository() {
 }
 
 function _update_scripts() {
-	local DESTINATIONS="/usr/local/sbin /usr/local/bin"
-
 	einfo "Updating scripts for ${HOSTNAME}"
+
+	local DESTINATIONS="/usr/local/sbin /usr/local/bin"
 
 	# Include scripts from work repository
 	[[ -n ${WORK} ]] && WORK_REPOSITORY="/home/$USER/Source_Code/suse/$USER/scripts"
@@ -89,6 +89,28 @@ function _update_configs() {
 	einfo "Done"
 }
 
+function _update_crons() {
+    einfo "Updating cron jobs for $HOSTNAME"
+
+    SOURCE_DIR="${REPOSITORY}"
+
+    if [[ $SBIN =~ "update-notifier" ]]; then
+        FILE="update-notifier"
+        DESTINATION="/etc/cron.weekly"
+        TARGET=$FILE
+        _install_file
+    fi
+
+    if [[ $SBIN =~ "keychain" ]]; then
+        FILE="update-notifier"
+        DESTINATION="/etc/cron.hourly"
+        TARGET=$FILE
+        _install_file
+   fi
+
+    einfo "Done"
+}
+
 case $HOSTNAME in
 	canibus)
 		SBIN="cleanup create_symlinks emerge-tmpfs host-update update"
@@ -124,6 +146,7 @@ case $HOSTNAME in
 	xzibit)
 		SBIN="cleanup create_symlinks emerge-tmpfs host-update update"
 		BIN="create_repolinks get-swamp-id git packagelist ssh wakeonlan"
+        CRON_HOURLY="keychain"
 		HOMEDIR=1
 		WORK=1
 		;;
@@ -135,3 +158,4 @@ esac
 _repository
 _update_scripts
 _update_configs
+_update_crons
