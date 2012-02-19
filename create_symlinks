@@ -94,19 +94,16 @@ function _update_crons() {
 
     SOURCE_DIR="${REPOSITORY}"
 
-    if [[ $SBIN =~ "update-notifier" ]]; then
-        FILE="update-notifier"
-        DESTINATION="/etc/cron.weekly"
-        TARGET=$FILE
+    for FILE in keychain update-notifier; do
+        if [[ $SBIN =~ "${FILE}" ]]; then
+            TARGET=$FILE
+            case $FILE in
+                host-update) DESTINATION="/etc/cron.weekly" ;;
+                keychain) DESTINATION="/etc/cron.hourly" ;;
+            esac
+        fi
         _install_file
-    fi
-
-    if [[ $SBIN =~ "keychain" ]]; then
-        FILE="update-notifier"
-        DESTINATION="/etc/cron.hourly"
-        TARGET=$FILE
-        _install_file
-   fi
+    done
 
     einfo "Done"
 }
