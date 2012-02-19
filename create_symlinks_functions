@@ -1,0 +1,15 @@
+#!/bin/bash
+# Common functions for create_symlinks and create_work_symlinks
+
+function _install_file() {
+    local BROKEN
+    if [[ -L ${DESTINATION}/${TARGET} ]]; then
+        BROKEN=$(find ${DESTINATION}/${TARGET} -type l -follow 2>/dev/null)
+    else
+        [[ -f ${DESTINATION}/${TARGET} ]] && BROKEN=1
+    fi
+    [[ -n $BROKEN ]] && rm ${DESTINATION}/${TARGET}
+    [[ -L ${DESTINATION}/${TARGET} ]] || \
+        ( ln -s ${SOURCE_DIR}/${FILE} ${DESTINATION}/${TARGET} && \
+        ewarn "Installed ${DESTINATION}/${TARGET}" )
+}

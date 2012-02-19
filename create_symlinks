@@ -10,19 +10,6 @@ fi
 
 USER="tampakrap"
 
-function _install_file() {
-	local BROKEN
-	if [[ -L ${DESTINATION}/${TARGET} ]]; then
-		BROKEN=$(find ${DESTINATION}/${TARGET} -type l -follow 2>/dev/null)
-    else
-        [[ -f ${DESTINATION}/${TARGET} ]] && BROKEN=1
-    fi
-    [[ -n $BROKEN ]] && rm ${DESTINATION}/${TARGET}
-	[[ -L ${DESTINATION}/${TARGET} ]] || \
-		( ln -s ${SOURCE_DIR}/${FILE} ${DESTINATION}/${TARGET} && \
-		ewarn "Installed ${DESTINATION}/${TARGET}" )
-}
-
 function _update_scripts() {
 	local DESTINATIONS="/usr/local/sbin /usr/local/bin"
 
@@ -37,6 +24,8 @@ function _update_scripts() {
 		git pull > /dev/null
 		popd > /dev/null 2>&1
 	fi
+
+    source $REPOSITORY/create_symlinks_functions
 
 	# Include scripts from work repository
 	[[ -n ${WORK} ]] && WORK_REPOSITORY="/home/$USER/Source_Code/suse/$USER/scripts"
