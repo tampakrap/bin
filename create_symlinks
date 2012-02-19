@@ -10,18 +10,24 @@ fi
 
 USER="tampakrap"
 
-function _update() {
+function _install_file() {
+	local BROKEN
+	[[ -L ${DESTINATION}/${TARGET} ]] && \
+		BROKEN=$(find ${DESTINATION}/${TARGET} -type l -follow 2>/dev/null)
+	[[ -n $BROKEN ]] && rm ${DESTINATION}/${TARGET}
+	[[ -L ${DESTINATION}/${TARGET} ]] || \
+		( ln -s ${REPOSITORY}/${FILE} ${DESTINATION}/${TARGET} && \
+		ewarn "Installed ${DESTINATION}/${TARGET}" )
+}
+
+function _update_scripts() {
 	local DESTINATIONS="/usr/local/sbin /usr/local/bin"
 
-	einfo "Update symlinks for ${HOSTNAME}"
+	einfo "Updating scripts for ${HOSTNAME}"
 
 	# Desktop/Laptop OR Server
-	if [[ ${HOMEDIR} == 1 ]]; then
+	if [[ -n ${HOMEDIR} ]]; then
 		REPOSITORY="/home/$USER/Source_Code/raekwon/scripts"
-		[[ -L /home/$USER/.gitconfig ]] || \
-			( su -c "ln -s ${REPOSITORY}/gitconfig ~/.gitconfig" $USER && einfo "Installed .gitconfig" )
-		[[ -L /home/$USER/.ssh/config ]] || \
-			( su -c "ln -s ${REPOSITORY}/sshconfig ~/.ssh/config" $USER && einfo "Installed .ssh/config" )
 	else
 		REPOSITORY="/var/repos/scripts"
 		pushd $REPOSITORY > /dev/null 2>&1
@@ -39,15 +45,12 @@ function _update() {
 		else
 			SCRIPTS=${BIN}
 		fi
-		for script in ${SCRIPTS}; do
-			if [[ -f ${REPOSITORY}/${script} ]]; then
-				[[ -L ${DESTINATION}/${script} ]] || \
-				( ln -s ${REPOSITORY}/${script} ${DESTINATION} && 
-				ewarn "New script ${script} installed in ${DESTINATION}" )
-			elif [[ -n ${WORK} ]] && [[ -f ${WORK_REPOSITORY}/${script} ]]; then
-				[[ -L ${DESTINATION}/${script} ]] || \
-				( ln -s ${WORK_REPOSITORY}/${script} ${DESTINATION} &&
-				ewarn "New script ${script} installed in ${DESTINATION}" )
+		for FILE in ${SCRIPTS}; do
+			TARGET=${FILE}
+			if [[ -f ${REPOSITORY}/${FILE} ]]; then
+				_install_file
+			elif [[ -n ${WORK} ]] && [[ -f ${WORK_REPOSITORY}/${FILE} ]]; then
+				_install_file
 			fi
 		done
 		# Install additional work scripts that don't reside in WORK_REPOSITORY
@@ -56,6 +59,39 @@ function _update() {
 
 	# /etc/hosts.d
 	[[ -L /etc/hosts.d ]] || ( ln -s ${REPOSITORY}/hosts.d /etc && ewarn "Installed hosts.d" )
+
+	einfo "Done"
+}
+
+function _update_configs() {
+	einfo "Updating configs for ${HOSTNAME}"
+
+	REPOSITORY="${REPOSITORY}/configs"
+	for FILE in `ls ${REPOSITORY}`; do
+		case $FILE in
+			user.*)
+				if [[ -n ${HOMEDIR} ]]; then
+					DESTINATION="/home/$USER"
+					case $FILE in
+						user.ssh) TARGET=".ssh/config" ;;
+						*) TARGET=".${FILE##*.}" ;;
+					esac
+				fi
+				;;
+			root.*)
+				DESTINATION="/root"
+				TARGET=".${FILE##*.}"
+				;;
+			etc.*)
+				DESTINATION="/etc"
+				case $FILE in
+					etc.vimrc.local) TARGET="vim/vimrc.local" ;;
+					*) TARGET=".${FILE##*.}" ;;
+				esac
+				;;
+		esac
+		_install_file
+	done
 
 	einfo "Done"
 }
@@ -111,4 +147,5 @@ case $HOSTNAME in
 		exit 1
 esac
 
-_update
+_update_scripts
+_update_configs
