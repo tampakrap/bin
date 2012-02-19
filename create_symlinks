@@ -10,12 +10,7 @@ fi
 
 USER="tampakrap"
 
-function _update_scripts() {
-	local DESTINATIONS="/usr/local/sbin /usr/local/bin"
-
-	einfo "Updating scripts for ${HOSTNAME}"
-
-	# Desktop/Laptop OR Server
+function _repository() {
 	if [[ -n ${HOMEDIR} ]]; then
 		REPOSITORY="/home/$USER/Source_Code/raekwon/scripts"
 	else
@@ -26,6 +21,12 @@ function _update_scripts() {
 	fi
 
     source $REPOSITORY/create_symlinks_functions
+}
+
+function _update_scripts() {
+	local DESTINATIONS="/usr/local/sbin /usr/local/bin"
+
+	einfo "Updating scripts for ${HOSTNAME}"
 
 	# Include scripts from work repository
 	[[ -n ${WORK} ]] && WORK_REPOSITORY="/home/$USER/Source_Code/suse/$USER/scripts"
@@ -50,9 +51,6 @@ function _update_scripts() {
 		# Install additional work scripts that don't reside in WORK_REPOSITORY
 		[[ -n ${WORK} ]] && ${WORK_REPOSITORY}/create_work_symlinks
 	done
-
-	# /etc/hosts.d
-	[[ -L /etc/hosts.d ]] || ( ln -s ${REPOSITORY}/hosts.d /etc && ewarn "Installed hosts.d" )
 
 	einfo "Done"
 }
@@ -86,6 +84,8 @@ function _update_configs() {
 		esac
 		_install_file
 	done
+
+    [[ -L /etc/hosts.d ]] || ( ln -s ${REPOSITORY}/hosts.d /etc && ewarn "Installed hosts.d" )
 
 	einfo "Done"
 }
@@ -133,5 +133,6 @@ case $HOSTNAME in
 		exit 1
 esac
 
+_repository
 _update_scripts
 _update_configs
