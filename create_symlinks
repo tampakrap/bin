@@ -66,27 +66,25 @@ function _update_configs() {
 					DESTINATION="/home/$USER"
 					case $FILE in
 						user.ssh) TARGET=".ssh/config" ;;
-                        user.gpg-agent.conf) TARGET=".gnupg/gpg-agent.conf" ;;
-						*) TARGET=".${FILE##*.}" ;;
+                        user.gpg-agent.conf) TARGET=".gnupg/${FILE#*.}" ;;
+						*) TARGET=".${FILE#*.}" ;;
 					esac
 				fi
 				;;
 			root.*)
 				DESTINATION="/root"
-				TARGET=".${FILE##*.}"
+				TARGET=".${FILE#*.}"
 				;;
 			etc.*)
 				DESTINATION="/etc"
 				case $FILE in
-					etc.vimrc.local) TARGET="vim/vimrc.local" ;;
-					*) TARGET=".${FILE##*.}" ;;
+					etc.vimrc.local) TARGET="vim/${FILE#*.}" ;;
+					*) TARGET="${FILE#*.}" ;;
 				esac
 				;;
 		esac
 		_install_file
 	done
-
-    [[ -L /etc/hosts.d ]] || ( ln -s ${REPOSITORY}/hosts.d /etc && ewarn "Installed hosts.d" )
 
 	einfo "Done"
 }
