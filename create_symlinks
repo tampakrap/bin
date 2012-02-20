@@ -15,9 +15,11 @@ function _repository() {
         REPOSITORY="/home/$USER/Source_Code/raekwon/scripts"
     else
         REPOSITORY="/var/repos/scripts"
+        einfo "Updating repository"
         pushd $REPOSITORY > /dev/null 2>&1
         git pull > /dev/null
         popd > /dev/null 2>&1
+        einfo "Done"
     fi
 
     source $REPOSITORY/create_symlinks_functions
