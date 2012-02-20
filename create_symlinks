@@ -4,89 +4,89 @@
 . /etc/init.d/functions.sh
 
 if [[ $(whoami) != "root" ]]; then
-	eerror "Must be run as root, terminating"
-	exit 1
+    eerror "Must be run as root, terminating"
+    exit 1
 fi
 
 USER="tampakrap"
 
 function _repository() {
-	if [[ -n ${HOMEDIR} ]]; then
-		REPOSITORY="/home/$USER/Source_Code/raekwon/scripts"
-	else
-		REPOSITORY="/var/repos/scripts"
-		pushd $REPOSITORY > /dev/null 2>&1
-		git pull > /dev/null
-		popd > /dev/null 2>&1
-	fi
+    if [[ -n ${HOMEDIR} ]]; then
+        REPOSITORY="/home/$USER/Source_Code/raekwon/scripts"
+    else
+        REPOSITORY="/var/repos/scripts"
+        pushd $REPOSITORY > /dev/null 2>&1
+        git pull > /dev/null
+        popd > /dev/null 2>&1
+    fi
 
     source $REPOSITORY/create_symlinks_functions
 }
 
 function _update_scripts() {
-	einfo "Updating scripts for ${HOSTNAME}"
+    einfo "Updating scripts for ${HOSTNAME}"
 
-	local DESTINATIONS="/usr/local/sbin /usr/local/bin"
+    local DESTINATIONS="/usr/local/sbin /usr/local/bin"
 
-	# Include scripts from work repository
-	[[ -n ${WORK} ]] && WORK_REPOSITORY="/home/$USER/Source_Code/suse/$USER/scripts"
+    # Include scripts from work repository
+    [[ -n ${WORK} ]] && WORK_REPOSITORY="/home/$USER/Source_Code/suse/$USER/scripts"
 
-	# Install the scripts
-	for DESTINATION in ${DESTINATIONS}; do
-		if [[ ${DESTINATION} == "/usr/local/sbin" ]]; then
-			SCRIPTS=${SBIN}
-		else
-			SCRIPTS=${BIN}
-		fi
-		for FILE in ${SCRIPTS}; do
-			TARGET=${FILE}
-			if [[ -f ${REPOSITORY}/${TARGET} ]]; then
+    # Install the scripts
+    for DESTINATION in ${DESTINATIONS}; do
+        if [[ ${DESTINATION} == "/usr/local/sbin" ]]; then
+            SCRIPTS=${SBIN}
+        else
+            SCRIPTS=${BIN}
+        fi
+        for FILE in ${SCRIPTS}; do
+            TARGET=${FILE}
+            if [[ -f ${REPOSITORY}/${TARGET} ]]; then
                 SOURCE_DIR="${REPOSITORY}"
-				_install_file
-			elif [[ -n ${WORK} ]] && [[ -f ${WORK_REPOSITORY}/${TARGET} ]]; then
+                _install_file
+            elif [[ -n ${WORK} ]] && [[ -f ${WORK_REPOSITORY}/${TARGET} ]]; then
                 SOURCE_DIR="${WORK_REPOSITORY}"
-				_install_file
-			fi
-		done
-		# Install additional work scripts that don't reside in WORK_REPOSITORY
-		[[ -n ${WORK} ]] && ${WORK_REPOSITORY}/create_work_symlinks
-	done
+                _install_file
+            fi
+        done
+        # Install additional work scripts that don't reside in WORK_REPOSITORY
+        [[ -n ${WORK} ]] && ${WORK_REPOSITORY}/create_work_symlinks
+    done
 
-	einfo "Done"
+    einfo "Done"
 }
 
 function _update_configs() {
-	einfo "Updating configs for ${HOSTNAME}"
+    einfo "Updating configs for ${HOSTNAME}"
 
-	SOURCE_DIR="${REPOSITORY}/configs"
-	for FILE in `ls ${SOURCE_DIR}`; do
-		case $FILE in
-			user.*)
-				if [[ -n ${HOMEDIR} ]]; then
-					DESTINATION="/home/$USER"
-					case $FILE in
-						user.ssh) TARGET=".ssh/config" ;;
+    SOURCE_DIR="${REPOSITORY}/configs"
+    for FILE in `ls ${SOURCE_DIR}`; do
+        case $FILE in
+            user.*)
+                if [[ -n ${HOMEDIR} ]]; then
+                    DESTINATION="/home/$USER"
+                    case $FILE in
+                        user.ssh) TARGET=".ssh/config" ;;
                         user.gpg-agent.conf) TARGET=".gnupg/${FILE#*.}" ;;
-						*) TARGET=".${FILE#*.}" ;;
-					esac
-				fi
-				;;
-			root.*)
-				DESTINATION="/root"
-				TARGET=".${FILE#*.}"
-				;;
-			etc.*)
-				DESTINATION="/etc"
-				case $FILE in
-					etc.vimrc.local) TARGET="vim/${FILE#*.}" ;;
-					*) TARGET="${FILE#*.}" ;;
-				esac
-				;;
-		esac
-		_install_file
-	done
+                        *) TARGET=".${FILE#*.}" ;;
+                    esac
+                fi
+                ;;
+            root.*)
+                DESTINATION="/root"
+                TARGET=".${FILE#*.}"
+                ;;
+            etc.*)
+                DESTINATION="/etc"
+                case $FILE in
+                    etc.vimrc.local) TARGET="vim/${FILE#*.}" ;;
+                    *) TARGET="${FILE#*.}" ;;
+                esac
+                ;;
+        esac
+        _install_file
+    done
 
-	einfo "Done"
+    einfo "Done"
 }
 
 function _update_crons() {
@@ -109,46 +109,46 @@ function _update_crons() {
 }
 
 case $HOSTNAME in
-	canibus)
-		SBIN="cleanup create_symlinks emerge-tmpfs host-update update"
-		BIN="create_repolinks git packagelist ssh wakeonlan"
-		HOMEDIR=1
-		;;
-	virtuoso)
-		SBIN="cleanup create_symlinks emerge-tmpfs host-update update"
-		BIN="create_repolinks music-sync git packagelist ssh wakeonlan"
-		HOMEDIR=1
-		WORK=1
-		;;
-	madlib)
-		SBIN="cleanup create_symlinks emerge-tmpfs host-update update"
-		BIN="wakeonlan"
-		;;
-	eyedea)
-		SBIN="cleanup create_symlinks emerge-tmpfs host-update update-notifier"
-		BIN="wakeonlan"
-		;;
-	evidence)
-		SBIN="cleanup create_symlinks emerge-tmpfs host-update update-notifier"
-		BIN="wakeonlan"
-		;;
-	everlast)
-		SBIN="cleanup create_symlinks emerge-tmpfs host-update update-notifier"
-		BIN="wakeonlan"
-		;;
-	raekwon)
-		SBIN="cleanup create_symlinks emerge-tmpfs host-update update-notifier"
-		BIN="wakeonlan"
-		;;
-	xzibit)
-		SBIN="cleanup create_symlinks emerge-tmpfs host-update keychain update"
-		BIN="create_repolinks get-swamp-id git packagelist ssh wakeonlan"
-		HOMEDIR=1
-		WORK=1
-		;;
-	*)
-		eerror "${HOSTNAME} not found, terminating"
-		exit 1
+    canibus)
+        SBIN="cleanup create_symlinks emerge-tmpfs host-update update"
+        BIN="create_repolinks git packagelist ssh wakeonlan"
+        HOMEDIR=1
+        ;;
+    virtuoso)
+        SBIN="cleanup create_symlinks emerge-tmpfs host-update update"
+        BIN="create_repolinks music-sync git packagelist ssh wakeonlan"
+        HOMEDIR=1
+        WORK=1
+        ;;
+    madlib)
+        SBIN="cleanup create_symlinks emerge-tmpfs host-update update"
+        BIN="wakeonlan"
+        ;;
+    eyedea)
+        SBIN="cleanup create_symlinks emerge-tmpfs host-update update-notifier"
+        BIN="wakeonlan"
+        ;;
+    evidence)
+        SBIN="cleanup create_symlinks emerge-tmpfs host-update update-notifier"
+        BIN="wakeonlan"
+        ;;
+    everlast)
+        SBIN="cleanup create_symlinks emerge-tmpfs host-update update-notifier"
+        BIN="wakeonlan"
+        ;;
+    raekwon)
+        SBIN="cleanup create_symlinks emerge-tmpfs host-update update-notifier"
+        BIN="wakeonlan"
+        ;;
+    xzibit)
+        SBIN="cleanup create_symlinks emerge-tmpfs host-update keychain update"
+        BIN="create_repolinks get-swamp-id git packagelist ssh wakeonlan"
+        HOMEDIR=1
+        WORK=1
+        ;;
+    *)
+        eerror "${HOSTNAME} not found, terminating"
+        exit 1
 esac
 
 _repository
