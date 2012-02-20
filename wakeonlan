@@ -22,4 +22,6 @@ case $1 in
 esac
 
 einfo "Waking up $1"
+[[ -x /usr/bin/wakeonlan ]] || \
+    eerror "Please install net-misc/wakeonlan" && exit 1
 /usr/bin/wakeonlan -i 192.168.2.255 $MAC
