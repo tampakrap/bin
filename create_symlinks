@@ -139,7 +139,7 @@ case $HOSTNAME in
         BIN="wakeonlan"
         ;;
     raekwon)
-        SBIN="cleanup create_symlinks emerge-tmpfs host-update update-notifier"
+        SBIN="cleanup create_symlinks emerge-tmpfs update-notifier"
         BIN="wakeonlan"
         ;;
     xzibit)
