@@ -16,11 +16,7 @@ case $1 in
 	evidence) MAC="00:E0:4D:03:7E:50" ;;
 	everlast) MAC="00:50:FC:FA:05:C9" ;;
 	*)
-        if [[ -n $1 ]]; then
-            ewarn "$1 not found, terminating"
-        else
-            ewarn "No host given, terminating"
-        fi
+        eerror "Host not found or no host given, terminating"
 		exit 1
 		;;
 esac
