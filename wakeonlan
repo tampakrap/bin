@@ -4,6 +4,11 @@
 
 . /etc/init.d/functions.sh
 
+if [[ ! -x /usr/bin/wakeonlan ]]; then
+    eerror "Please install net-misc/wakeonlan"
+    exit 1
+fi
+
 case $1 in
 	canibus) MAC="00:1B:FC:D4:DD:DE" ;;
 	virtuoso)
@@ -22,6 +27,4 @@ case $1 in
 esac
 
 einfo "Waking up $1"
-[[ -x /usr/bin/wakeonlan ]] || \
-    eerror "Please install net-misc/wakeonlan" && exit 1
 /usr/bin/wakeonlan -i 192.168.2.255 $MAC
