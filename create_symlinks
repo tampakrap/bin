@@ -98,8 +98,8 @@ function _update_crons() {
         if [[ $SBIN =~ "${FILE}" ]]; then
             TARGET=$FILE
             case $FILE in
-                host-update) DESTINATION="/etc/cron.weekly" ;;
                 keychain) DESTINATION="/etc/cron.hourly" ;;
+                update-notifier) DESTINATION="/etc/cron.weekly" ;;
             esac
         fi
         _install_file
