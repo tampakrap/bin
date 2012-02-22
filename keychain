@@ -1,2 +1,2 @@
 #!/bin/bash
-keychain --clean > /dev/null 2>&1
+keychain --clear > /dev/null 2>&1
