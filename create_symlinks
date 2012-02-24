@@ -71,8 +71,8 @@ function _update_configs() {
                         user.gpg-agent.conf) TARGET=".gnupg/${FILE#*.}" ;;
                         *) TARGET=".${FILE#*.}" ;;
                     esac
-                elif
-                    [[ $FILE == "user.vimrc" ]] && TARGET=".${FILE#*.}"
+                elif [[ $FILE == "user.vimrc" ]]; then
+                    TARGET=".${FILE#*.}"
                 else
                     break
                 fi
