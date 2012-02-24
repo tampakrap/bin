@@ -1,2 +1,11 @@
 #!/bin/bash
-keychain --clear > /dev/null 2>&1
+USER="tampakrap"
+DAY=$(date +%A)
+HOUR=$(date +%H)
+if [[ $DAY != "Saturday" ]] && [[ $DAY != "Sunday" ]]; then
+    if [[ $HOUR < "10" ]] || [[ $HOUR > "19" ]]; then
+        su -c "keychain --clear" $USER > /dev/null 2>&1
+    fi
+else
+    su -c "keychain --clear" $USER > /dev/null 2>&1
+fi
