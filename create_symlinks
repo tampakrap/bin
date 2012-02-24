@@ -64,13 +64,15 @@ function _update_configs() {
     for FILE in `ls ${SOURCE_DIR}`; do
         case $FILE in
             user.*)
+                DESTINATION="/home/$USER"
                 if [[ -n ${HOMEDIR} ]]; then
-                    DESTINATION="/home/$USER"
                     case $FILE in
                         user.ssh) TARGET=".ssh/config" ;;
                         user.gpg-agent.conf) TARGET=".gnupg/${FILE#*.}" ;;
                         *) TARGET=".${FILE#*.}" ;;
                     esac
+                else
+                    [[ $FILE == "user.vimrc" ]] && TARGET=".${FILE#*.}"
                 fi
                 ;;
             root.*)
@@ -84,8 +86,8 @@ function _update_configs() {
                     *) TARGET="${FILE#*.}" ;;
                 esac
                 ;;
+            _install_file
         esac
-        _install_file
     done
 
     einfo "Done"
