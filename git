@@ -1,11 +1,12 @@
 #!/bin/bash
 # git wrapper in order to clone specific repositories as regular user
-# (instead of portage) adn preserve permissions in updates
+# (instead of portage) and preserve permissions in updates.
 # In order to perform corectly it needs the following in /etc/sudoers:
 # portage ALL=($USER) NOPASSWD: /usr/bin/git *
-# ... and the following in /etc/make.conf:
+# ...the following in /etc/make.conf:
+# GENTOO_DEVELOPER=1
 # KDE_DEVELOPER=1
-# and a ~/.gitconfig similar to the one included in this repository
+# ...and a ~/.gitconfig similar to the one in configs/user.gitconfig
 
 source /etc/make.conf
 
@@ -13,21 +14,21 @@ USER="tampakrap"
 GIT="/usr/bin/git"
 
 if [[ $1 == 'clone' ]]; then
-	if [[ $2 == "git://anongit.kde.org/"* ]] && [[ $KDE_DEVELOPER == 1 ]]; then
-		KDE_REPO=${2/*\/}
-		$GIT "$@"
-		chown -R $USER:$USER $DISTDIR/egit-src/$KDE_REPO
-	elif [[ $2 == "git://git.overlays.gentoo.org/"* ]] && [[ $GENTOO_DEVELOPER == 1 ]];then
-		GENTOO_REPO=${2/*\/}
-		$GIT "$@"
-		chown -R $USER:$USER $DISTDIR/egit-src/$GENTOO_REPO
-	else
-		$GIT "$@"
-	fi
-else 
-	if [[ ${PWD%/*} == $DISTDIR/egit-src ]] && ( grep -s -q gentoo .git/config || grep -s -q kde .git/config ); then
-		sudo -u $USER $GIT "$@"
-	else
-		$GIT "$@"
-	fi
+    if [[ $2 == "git://anongit.kde.org/"* ]] && [[ -n $KDE_DEVELOPER ]]; then
+        KDE_REPO=${2/*\/}
+        $GIT "$@"
+        chown -R $USER:$USER $DISTDIR/egit-src/$KDE_REPO
+    elif [[ $2 == "git://git.overlays.gentoo.org/"* ]] && [[ -n $GENTOO_DEVELOPER ]]; then
+        GENTOO_REPO=${2/*\/}
+        $GIT "$@"
+        chown -R $USER:$USER $DISTDIR/egit-src/$GENTOO_REPO
+    else
+        $GIT "$@"
+    fi
+else
+    if [[ ${PWD%/*} == $DISTDIR/egit-src ]] && ( grep -s -q gentoo .git/config || grep -s -q kde .git/config ); then
+        sudo -u $USER $GIT "$@"
+    else
+        $GIT "$@"
+    fi
 fi
