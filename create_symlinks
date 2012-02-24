@@ -86,8 +86,8 @@ function _update_configs() {
                     *) TARGET="${FILE#*.}" ;;
                 esac
                 ;;
-            _install_file
         esac
+        _install_file
     done
 
     einfo "Done"
