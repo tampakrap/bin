@@ -20,6 +20,7 @@ function _repository() {
         git pull | grep -q -v 'Already up-to-date.' && CHANGED=1
         popd > /dev/null 2>&1
         einfo "Done"
+        [[ -n $CHANGED ]] && echo "test"
         [[ -n $CHANGED ]] && einfo "Restarting the script" && $0 && exit
     fi
 
