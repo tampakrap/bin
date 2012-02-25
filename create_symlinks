@@ -17,9 +17,10 @@ function _repository() {
         REPOSITORY="/var/repos/scripts"
         einfo "Updating repository"
         pushd $REPOSITORY > /dev/null 2>&1
-        git pull > /dev/null
+        git pull | grep -q -v 'Already up-to-date.' && CHANGED=1
         popd > /dev/null 2>&1
         einfo "Done"
+        [[ -n $CHANGED ]] && einfo "Restarting the script" && $0 && exit
     fi
 
     source $REPOSITORY/create_symlinks_functions
