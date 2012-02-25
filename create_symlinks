@@ -62,6 +62,7 @@ function _update_configs() {
 
     SOURCE_DIR="${REPOSITORY}/configs"
     for FILE in `ls ${SOURCE_DIR}`; do
+        IGNORE=''
         case $FILE in
             user.*)
                 DESTINATION="/home/$USER"
@@ -74,7 +75,7 @@ function _update_configs() {
                 elif [[ $FILE == "user.vimrc" ]]; then
                     TARGET=".${FILE#*.}"
                 else
-                    break
+                    IGNORE=1
                 fi
                 ;;
             root.*)
@@ -89,7 +90,7 @@ function _update_configs() {
                 esac
                 ;;
         esac
-        _install_file
+        [[ -n $IGNORE ]] || _install_file
     done
 
     einfo "Done"
