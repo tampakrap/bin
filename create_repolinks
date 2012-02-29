@@ -15,6 +15,7 @@ REPO_DIR="/home/tampakrap/Source_Code/"
 GENTOO_REPO_DIR="${REPO_DIR}gentoo/"
 KDE_REPO_DIR="${REPO_DIR}kde/"
 SUSE_REPO_DIR="${REPO_DIR}suse/"
+LINUXTEAM_REPO_DIR="${REPO_DIR}linuxteam/"
 OVERLAY_DIR="/var/lib/layman/"
 
 if [[ $UID == 0 ]]; then
@@ -22,7 +23,7 @@ if [[ $UID == 0 ]]; then
 	exit 1
 fi
 
-einfo "### GENTOO OVERLAYS ###"
+einfo "### Gentoo Overlays ###"
 cd $OVERLAY_DIR
 for repo in `ls -d */`; do
 	repo=${repo%/}
@@ -39,7 +40,7 @@ for repo in `ls -d */`; do
 	popd > /dev/null
 done
 
-einfo "### GENTOO REPOS ###"
+einfo "### Gentoo Repositories ###"
 cd $DISTDIR/egit-src
 for repo in `ls -d */`; do
 	if grep -q -e gentoo.org -e gentoo: $repo.git/config; then
@@ -58,7 +59,7 @@ for repo in `ls -d */`; do
 	fi
 done
 
-einfo "### KDE REPOS ###"
+einfo "### KDE Rrepositories ###"
 cd $DISTDIR/egit-src
 for repo in `ls -d */`; do
 	if grep -q -e kde.org -e kde: $repo.git/config; then
@@ -77,7 +78,7 @@ for repo in `ls -d */`; do
 	fi
 done
 
-einfo "### SUSE REPOS ###"
+einfo "### SUSE Repositories ###"
 cd $SUSE_REPO_DIR
 for repo in `ls -d */` `ls -d tampakrap/*/`; do
 	repo=${repo%/}
@@ -94,6 +95,25 @@ for repo in `ls -d */` `ls -d tampakrap/*/`; do
 			ewarn "Added SUSE mail for $repo repository" )
 		popd > /dev/null
 	fi
+done
+
+einfo "### LinuxTeam REPOS ###"
+cd $LINUXTEAM_REPO_DIR
+for repo in `ls -d */`; do
+    repo=${repo%/}
+    if [[ -d $repo/.git ]]; then
+        pushd $repo > /dev/null
+        einfo "Checking $repo repository"
+        REPO_GIT_EMAIL=`grep email .git/config | awk -F'= ' '{ print $2 }'`
+        if [[ -n $REPO_GIT_EMAIL ]] && [[ $REPO_GIT_EMAIL != "tampakrap@linuxteam.cs.teilar.gr" ]]; then
+            sed -i -e "s:${REPO_GIT_EMAIL}:tampakrap@linuxteam.cs.teilar.gr:" .git/config &&
+            ewarn "Corrected LinuxTeam mail for $repo repository"
+        fi
+        [[ ! -n $REPO_GIT_EMAIL ]] && ( \
+            git config user.email "linuxteam.cs.teilar.gr" &&
+            ewarn "Added LinuxTeam mail for $repo repository" )
+        popd > /dev/null
+    fi
 done
 
 einfo "### CLEANUP BAD SYMLINKS ###"
