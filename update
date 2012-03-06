@@ -10,7 +10,7 @@ USER="tampakrap"
 for overlay in `eix --print PORTDIR_OVERLAY`
 do
 	einfo "Updating overlay ${overlay##*/}" &&
-	( 
+	(
 		cd $overlay > /dev/null &&
 		if [ -e .svn ]; then
 			su -c "source ~/.keychain/$HOSTNAME-sh; svn up" $USER
@@ -22,7 +22,7 @@ done
 einfo "Updating portage tree"
 su -c "source ~/.keychain/$HOSTNAME-sh; emerge --sync" $USER
 einfo "Running eix-update"
-eix-update
+su -c "eix-update" $USER
 einfo "Generating use.local.desc"
 egencache --update-use-local-desc
 einfo "Running emerge world"
