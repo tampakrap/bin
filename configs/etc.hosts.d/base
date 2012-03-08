@@ -1,2 +1,2 @@
-127.0.0.1       localhost CURRENT_HOST
+127.0.0.1       CURRENT_HOST localhost
 ::1             localhost6
