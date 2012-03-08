@@ -85,8 +85,9 @@ elif [[ $1 == "apathy" ]]; then
         $SSH 192.168.2.110 "$@"
     elif [[ -n $HOME_CZ ]]; then
         $SSH 192.168.11.110 "$@"
-    elif [[ -n $SUSE ]]; then
-        # Need to get a static IP first
+#    elif [[ -n $SUSE ]]; then
+#        Need to get a static IP first
+#        $SSH
     fi
 else
 	$SSH $@
