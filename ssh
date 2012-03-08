@@ -4,12 +4,13 @@
 # 2) my work pc
 # 3) my laptop
 
+# TODO: Find out if $1 is a box or an argument
 SSID_GR="guru"
 SSID_CZ="steele"
 SSID_SUSE="AttachmateGroup"
 SSH="/usr/bin/ssh"
 ADDR="home.tampakrap.gr -p"
-# TODO PARSE THEM FROM ~/.sshconfig
+# TODO Parse the followings from ~/.sshconfig
 SERVER1_NAME="eyedea"
 SERVER1_PORT="2107"
 SERVER2_NAME="evidence"
@@ -39,7 +40,7 @@ if [[ ! -n $CURRENT_SSID ]]; then
 	case $CURRENT_IP in
 		"192.168.2") HOME_GR=1 ;;
 		"192.168.11") HOME_CZ=1 ;;
-		10.[12]0.*) SUSE=1 ;; 
+		10.[12]0.*) SUSE=1 ;;
 	esac
 fi
 
@@ -66,19 +67,27 @@ elif [[ $1 == "xzibit" ]]; then
 	else
 		echo "You need to connect to SUSE VPN first"
 	fi
-# Connect to virtuoso
-# Based on common sense:
+# Connect to virtuoso. Based on common sense:
 # 1) if I'm at work then virtuoso is at HOME_CZ
 # 2) if I'm at HOME_CZ, then virtuoso is also there
 # 2) if I'm at HOME_GR, then virtuoso is also there
 elif [[ $1 == "virtuoso" ]]; then
-	if [[ -n $SUSE ]]; then
-		$SSH prague.tampakrap.gr
-	elif [[ -n $HOME_GR ]]; then
-		$SSH 192.168.1.102
+	if [[ -n $HOME_GR ]]; then
+		$SSH 192.168.2.102
 	elif [[ -n $HOME_CZ ]]; then
 		$SSH 192.168.11.102
+	elif [[ -n $SUSE ]]; then
+		$SSH prague.tampakrap.gr
 	fi
+# Connect to apathy. Based on common sense, apathy is always with me :P
+elif [[ $1 == "apathy" ]]; then
+    if [[ -n $HOME_GR ]]; then
+        $SSH 192.168.2.110 "$@"
+    elif [[ -n $HOME_CZ ]]; then
+        $SSH 192.168.11.110 "$@"
+    elif [[ -n $SUSE ]]; then
+        # Need to get a static IP first
+    fi
 else
 	$SSH $@
 fi
