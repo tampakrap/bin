@@ -80,7 +80,7 @@ done
 
 einfo "### SUSE Repositories ###"
 cd $SUSE_REPO_DIR
-for repo in `ls -d */` `ls -d tampakrap/*/`; do
+for repo in `ls -d */` `ls -d tampakrap/*/` `ls -d conversions/*/`; do
 	repo=${repo%/}
 	if [[ -d $repo/.git ]]; then
 		pushd $repo > /dev/null
