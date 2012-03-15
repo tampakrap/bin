@@ -19,7 +19,6 @@ fi
 export ECHANGELOG_USER="Theo Chatzimichos <tampakrap@gentoo.org>"
 eval `keychain --quiet --eval --agents ssh id_rsa id_dsa`
 if `getent passwd | grep -q tchatzimichos`; then
-    echo "yes"
     sudo -u tchatzimichos keychain --quiet --agents ssh id_rsa
 fi
 PAGER=/usr/bin/less
