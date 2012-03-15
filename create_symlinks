@@ -31,9 +31,6 @@ function _update_scripts() {
 
     local DESTINATIONS="/usr/local/sbin /usr/local/bin"
 
-    # Include scripts from work repository
-    [[ -n ${WORK} ]] && WORK_REPOSITORY="/home/$USER/Source_Code/suse/$USER/scripts"
-
     # Install the scripts
     for DESTINATION in ${DESTINATIONS}; do
         if [[ ${DESTINATION} == "/usr/local/sbin" ]]; then
@@ -43,13 +40,8 @@ function _update_scripts() {
         fi
         for FILE in ${SCRIPTS}; do
             TARGET=${FILE}
-            if [[ -f ${REPOSITORY}/${TARGET} ]]; then
-                SOURCE_DIR="${REPOSITORY}"
-                _install_file
-            elif [[ -n ${WORK} ]] && [[ -f ${WORK_REPOSITORY}/${TARGET} ]]; then
-                SOURCE_DIR="${WORK_REPOSITORY}"
-                _install_file
-            fi
+            SOURCE_DIR="${REPOSITORY}"
+            _install_file
         done
         # Install additional work scripts that don't reside in WORK_REPOSITORY
         [[ -n ${WORK} ]] && ${WORK_REPOSITORY}/create_work_symlinks
@@ -150,7 +142,7 @@ case $HOSTNAME in
         ;;
     xzibit)
         SBIN="cleanup create_symlinks emerge-tmpfs host-update keychain-clear update"
-        BIN="create_repolinks get-swamp-id git packagelist ssh wakeonlan"
+        BIN="create_repolinks git packagelist ssh wakeonlan"
         HOMEDIR=1
         WORK=1
         ;;
