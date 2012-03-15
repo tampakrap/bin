@@ -17,6 +17,8 @@ fi
 
 # Put your fun stuff here.
 export ECHANGELOG_USER="Theo Chatzimichos <tampakrap@gentoo.org>"
-eval `keychain --eval --agents ssh id_rsa id_dsa`
+eval `keychain --quiet --eval --agents ssh id_rsa id_dsa`
+sudo -u tchatzimichos keychain --quiet --agents ssh id_rsa
 PAGER=/usr/bin/less
 EDITOR=/usr/bin/vim
+alias isc='osc -A https://api.suse.de/'
