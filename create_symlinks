@@ -94,12 +94,13 @@ function _update_crons() {
 
     SOURCE_DIR="${REPOSITORY}"
 
-    for FILE in keychain-clear update-notifier; do
+    for FILE in keychain-clear update-notifier raekwon-backup; do
         if [[ $SBIN =~ "${FILE}" ]]; then
             TARGET=$FILE
             case $FILE in
                 keychain-clear) DESTINATION="/etc/cron.hourly" ;;
                 update-notifier) DESTINATION="/etc/cron.weekly" ;;
+                raekwon-backup) DESTINATION="/etc/cron.hourly" ;;
             esac
         fi
         _install_file
@@ -141,7 +142,7 @@ case $HOSTNAME in
         BIN="wakeonlan"
         ;;
     xzibit)
-        SBIN="cleanup create_symlinks emerge-tmpfs host-update keychain-clear update"
+        SBIN="cleanup create_symlinks emerge-tmpfs host-update keychain-clear raekwon-backup update"
         BIN="create_repolinks git packagelist ssh wakeonlan"
         HOMEDIR=1
         WORK=1
