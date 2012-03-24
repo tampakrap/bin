@@ -47,12 +47,9 @@ fi
 
 # Check if the list of arguments include any of my boxes
 for ARG in $NEWARGS; do
-    [[ "$ARG" =~ "@" ]] && NEWARGS="${ARG/*@/} -l ${ARG/@*/} ${NEWARGS/$ARG/}"
     if [[ $ARG != "-*" ]]; then
-        TARGET=`grep $ARG /etc/hosts | awk '{ print $2 }'`
-        if [[ -n $TARGET ]]; then
-            break
-        fi
+        [[ "$ARG" =~ "@" ]] && NEWARGS="${ARG/*@/} -l ${ARG/@*/} ${NEWARGS/$ARG/}"
+        [[ `grep $ARG /etc/hosts | awk '{ print $2 }'` ]] && TARGET="${ARG/*@/}" && break
     fi
 done
 IFS=$' '
