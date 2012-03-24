@@ -20,8 +20,8 @@ if [[ ! -d ${ENGLISH} ]]; then
 fi
 
 # update the repositories
-cd "${ENGLISH}"; cvs up > /dev/null
-cd "${PO_FILES}"; git pull --force >/dev/null
+cd "${ENGLISH}"; cvs up > /dev/null 2>&1
+cd "${PO_FILES}"; git pull --force >/dev/null 2>&1
 
 # update doc/
 cd ${PO_FILES}/doc/gettext/el/
