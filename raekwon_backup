@@ -1,0 +1,74 @@
+#!/bin/bash
+
+# Variables
+HOMEDIR="/home/tampakrap"
+BACKUP_DIR="${HOMEDIR}/Others/backups/raekwon"
+BACKUP_TARBALLS_DIR="${BACKUP_DIR}/tarballs/$(date +%Y%m)"
+BACKUP_SNAR_DIR="${BACKUP_DIR}/snar/$(date +%Y%m)"
+BACKUP_MYSQL_DIR="${BACKUP_DIR}/mysql/$(date +%Y%m)"
+HOST="raekwon"
+USER="rsyncuser"
+RSYNC_PASSFILE="/root/.raekwonrsyncpas"
+RSYNC_OPTIONS="--progress --stats -aHuvh --delete-after --delete-excluded --exclude=**~ --exclude=**/lost+found*/"
+RSYNCD_MODULE="root"
+RSYNC_TARGET="${BACKUP_DIR}/raekwon_uncompressed"
+LOCKFILE="${HOMEDIR}/backup.lock"
+GENTOO_EL_MYSQLUSER=""
+GENTOO_EL_MYSQLPASS=""
+GENTOO_EL_MYSQLDB=""
+
+# Handle the lockfile
+set -e
+if [ -e "${LOCKFILE}" ]; then
+    echo >&2 "Warning: \"${LOCKFILE}\" already present, not running backup."
+    exit 1
+fi
+touch "${LOCKFILE}"
+trap "rm -f ${LOCKFILE}" EXIT
+
+# Rsync uncompressed host
+[[ -d ${RSYNC_TARGET} ]] || mkdir -p ${RSYNC_TARGET}
+rsync ${RSYNC_OPTIONS} --password-file="${RSYNC_PASSFILE}" rsync://${USER}@${HOST}/${RSYNCD_MODULE} "${RSYNC_TARGET}" > /dev/null
+
+
+if [[ $(date +%d) == '24' ]] ; then
+    # Create new month's dirs
+    mkdir -p "${BACKUP_TARBALLS_DIR}" "${BACKUP_SNAR_DIR}" "${BACKUP_MYSQL_DIR}"
+    # New metadata
+    SNAR_SUFFIX="full"
+    # Cleanup old backups
+    rm -rf ${BACKUP_DIR}/tarballs/$(date --date='3 months ago' +%Y%m)
+    rm -rf ${BACKUP_DIR}/snar/$(date --date='3 months ago' +%Y%m)
+    rm -rf ${BACKUP_DIR}/mysql/$(date --date='3 months ago' +%Y%m)
+else
+    # Today's metadata based on the first one
+    SNAR_SUFFIX=$(date +%Y%m%d)
+    cp "${BACKUP_SNAR_DIR}/raekwon_backup_full.snar" "${BACKUP_SNAR_DIR}/raekwon_backup_${SNAR_SUFFIX}.snar"
+fi
+
+# Create tarball
+pushd "${BACKUP_TARBALLS_DIR}" > /dev/null
+tar --listed-incremental "${BACKUP_SNAR_DIR}/raekwon_backup_${SNAR_SUFFIX}.snar" -czpf "raekwon_$(date +%Y%m%d).tar.gz" -C "${RSYNC_TARGET}" $(ls ${RSYNC_TARGET})
+popd > /dev/null
+
+# Backup drupal database
+for database in www_gentoo_el_org www_kde_el_org quassel feedward; do
+    mv ${RSYNC_TARGET}/root/mysql_backups/${database}_$(date +%Y%m%d).sql "${BACKUP_MYSQL_DIR}/${database}_$(date +%Y%m%d).sql"
+done
+rm -rf ${RSYNC_TARGET}/root
+
+### MIRROR ###
+
+# Replace the MySQL credentials
+#sed -i -e "s#\$db_url.*#\$db_url = 'mysqli://$MYSQLUSER:$MYSQLPASS@localhost/$MYSQLDB';" ${RSYNC_TARGET}var/www/www.gentoo-el.org/htdocs/sites/default/settings.php
+
+# Restore the dump to the mirror
+#mysql --user="${MYSQLUSER}" --password="${MYSQLPASS}" "${MYSQLDB}" < "${BACKUP_MYSQL_DIR}/gentoo_el_org_$(date +%Y%m%d).sql"
+
+# Copy the site files in proper location and fix permissions
+#rm -rf ${HOMEDIR}www/
+#cp -r ${RSYNC_TARGET}var/www/www.gentoo-el.org/htdocs/ ${HOMEDIR}www/
+#chown -R gentoo:users "${HOMEDIR}www/"
+#find "${HOMEDIR}www/" -type f -exec chmod 644 {} \;
+#chgrp www-data "${HOMEDIR}www/sites/default/settings.php"
+#chown 640 "${HOMEDIR}www/sites/default/settings.php"
