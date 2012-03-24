@@ -1,0 +1,37 @@
+#!/bin/bash
+# Update the GORG CVS directories, create/update the translated .po files
+
+GORG="/var/www/gorg.gentoo-el.org"
+ENGLISH="$GORG/htdocs/doc/en"
+GREEK="$GORG/htdocs/doc/el"
+PO_FILES="$GORG/gentoo-doc-translations/"
+
+# Create the directories
+if [[ ! -d ${ENGLISH} ]]; then
+    cd ${GORG}
+    cvs -d :pserver:anonymous@anoncvs.gentoo.org:/var/cvsroot co gentoo/xml/htdocs > /dev/null
+    rm -rf htdocs
+    mv gentoo/xml/htdocs .
+    rm -rf gentoo
+    rm -rf ${GREEK}/*
+    mkdir ${GREEK}/handbook
+    git clone git://git.overlays.gentoo.org/proj/gentoo-doc-translations ${PO_FILES} > /dev/null
+fi
+
+# update the repositories
+cd "${ENGLISH}"; cvs up > /dev/null
+cd "${PO_FILES}"; git pull --force >/dev/null
+
+# update doc/
+cd ${PO_FILES}/doc/gettext/el/
+for xml in *po; do
+    [[ -e "${ENGLISH}/${xml%.*}" ]] && \
+    xml2po-gentoo -m guide -p "$xml" "${ENGLISH}/${xml%.*}"> "${GREEK}/${xml%.*}"
+done
+
+# update handbook/
+cd ${PO_FILES}/handbook/gettext/el/
+for xml in *po; do
+    [[ -e "${ENGLISH}/handbook/${xml%.*}" ]] && \
+    xml2po-gentoo -m guide -p "$xml" "${ENGLISH}/handbook/${xml%.*}" > "${GREEK}/handbook/${xml%.*}"
+done
