@@ -1,4 +1,5 @@
 #!/bin/bash
+# Used by gorg.gentoo-el.org to show the translated files that are not send to gentoo CVS yet
 # Update the GORG CVS directories, create/update the translated .po files
 
 GORG="/var/www/gorg.gentoo-el.org"
