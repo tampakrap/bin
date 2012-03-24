@@ -1,0 +1,70 @@
+#!/bin/bash
+
+# Variables
+HOST="$1"
+HOMEDIR="/home/tampakrap"
+BACKUP_DIR="${HOMEDIR}/Others/backups/${HOST}"
+BACKUP_TARBALLS_DIR="${BACKUP_DIR}/tarballs/$(date +%Y%m)"
+BACKUP_SNAR_DIR="${BACKUP_DIR}/snar/$(date +%Y%m)"
+BACKUP_MYSQL_DIR="${BACKUP_DIR}/mysql/$(date +%Y%m)"
+USER="${HOSTNAME}"
+RSYNC_PASSFILE="/root/.${HOST}rsyncpas"
+RSYNC_INCLUDE="/root/.${HOST}_include"
+RSYNC_OPTIONS="--progress --stats -aHuvh --delete-after --delete-excluded --exclude=**~ --exclude=**/lost+found*/"
+RSYNCD_MODULE="${HOSTNAME}"
+RSYNC_TARGET="${BACKUP_DIR}/${HOST}_uncompressed"
+LOCK="/var/lock/backup/${HOST}.lock"
+LOG="/var/log/backup/${HOST}.log"
+
+if [[ ! -n $HOST ]]; then
+    echo "No server specified"
+    exit 1
+fi
+
+echo "`date`: Starting backup" >> ${LOG}
+
+# Handle the lockfile
+set -e
+if [ -e "${LOCK}" ]; then
+    echo "Warning: \"${LOCK}\" already present, not running backup." >> ${LOG}
+    exit 1
+fi
+touch "${LOCK}"
+trap "rm -f ${LOCK}" EXIT
+
+# Rsync uncompressed host
+[[ -d ${RSYNC_TARGET} ]] || mkdir -p ${RSYNC_TARGET}
+rsync \
+    ${RSYNC_OPTIONS} --password-file="${RSYNC_PASSFILE}" --include-from=${RSYNC_INCLUDE} \
+    rsync://${USER}@${HOST}/${RSYNCD_MODULE} "${RSYNC_TARGET}" > /dev/null 2>>${LOG}
+
+if [[ $(date +%d) == '24' ]] ; then
+    # Create new month's dirs
+    mkdir -p "${BACKUP_TARBALLS_DIR}" "${BACKUP_SNAR_DIR}" "${BACKUP_MYSQL_DIR}"
+    # New metadata
+    SNAR_SUFFIX="full"
+    # Cleanup old backups
+    rm -rf ${BACKUP_DIR}/tarballs/$(date --date='3 months ago' +%Y%m)
+    rm -rf ${BACKUP_DIR}/snar/$(date --date='3 months ago' +%Y%m)
+    rm -rf ${BACKUP_DIR}/mysql/$(date --date='3 months ago' +%Y%m)
+else
+    # Today's metadata based on the first one
+    SNAR_SUFFIX=$(date +%Y%m%d)
+    cp "${BACKUP_SNAR_DIR}/${HOST}_backup_full.snar" "${BACKUP_SNAR_DIR}/${HOST}_backup_${SNAR_SUFFIX}.snar"
+fi
+
+# Create tarball
+pushd "${BACKUP_TARBALLS_DIR}" > /dev/null
+tar --listed-incremental "${BACKUP_SNAR_DIR}/${HOST}_backup_${SNAR_SUFFIX}.snar" \
+    -czpf "${HOST}_$(date +%Y%m%d).tar.gz" -C "${RSYNC_TARGET}" $(ls ${RSYNC_TARGET}) 2>>${LOG}
+popd > /dev/null
+
+# Backup databases
+if [[ $HOST == "raekwon" ]]; then
+    for database in www_gentoo_el_org www_kde_el_org quassel feedward; do
+        mv ${RSYNC_TARGET}/root/mysql_backups/${database}_$(date +%Y%m%d).sql "${BACKUP_MYSQL_DIR}/${database}_$(date +%Y%m%d).sql"
+    done
+    rm -rf ${RSYNC_TARGET}/root
+fi
+
+echo "Finished successfully" >> ${LOG}
