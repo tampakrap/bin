@@ -23,6 +23,8 @@ function _repository() {
         [[ -n $CHANGED ]] && einfo "Restarting the script" && $0 && exit
     fi
 
+    [[ -n ${WORK} ]] && WORK_REPOSITORY="/home/$USER/Source_Code/suse/$USER/scripts"
+
     source $REPOSITORY/create_symlinks_functions
 }
 
@@ -43,7 +45,7 @@ function _update_scripts() {
             SOURCE_DIR="${REPOSITORY}"
             _install_file
         done
-        # Install additional work scripts that don't reside in WORK_REPOSITORY
+        # Install additional work scripts that reside in WORK_REPOSITORY
         [[ -n ${WORK} ]] && ${WORK_REPOSITORY}/create_work_symlinks
     done
 
@@ -94,13 +96,13 @@ function _update_crons() {
 
     SOURCE_DIR="${REPOSITORY}"
 
-    for FILE in keychain-clear update-notifier raekwon-backup; do
+    for FILE in keychain-clear update-notifier raekwon_backup; do
         if [[ $SBIN =~ "${FILE}" ]]; then
             TARGET=$FILE
             case $FILE in
                 keychain-clear) DESTINATION="/etc/cron.hourly" ;;
                 update-notifier) DESTINATION="/etc/cron.weekly" ;;
-                raekwon-backup) DESTINATION="/etc/cron.hourly" ;;
+                raekwon_backup) DESTINATION="/etc/cron.hourly" ;;
             esac
         fi
         _install_file
@@ -142,7 +144,7 @@ case $HOSTNAME in
         BIN="wakeonlan"
         ;;
     xzibit)
-        SBIN="cleanup create_symlinks emerge-tmpfs host-update keychain-clear raekwon-backup update"
+        SBIN="cleanup create_symlinks emerge-tmpfs host-update keychain-clear raekwon_backup update"
         BIN="create_repolinks git packagelist ssh wakeonlan"
         HOMEDIR=1
         WORK=1
