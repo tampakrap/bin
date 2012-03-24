@@ -38,7 +38,7 @@ rsync \
     ${RSYNC_OPTIONS} --password-file="${RSYNC_PASSFILE}" --include-from=${RSYNC_INCLUDE} \
     rsync://${USER}@${HOST}/${RSYNCD_MODULE} "${RSYNC_TARGET}" > /dev/null 2>>${LOG}
 
-if [[ $(date +%d) == '24' ]] ; then
+if [[ $(date +%d) == '01' ]] ; then
     # Create new month's dirs
     mkdir -p "${BACKUP_TARBALLS_DIR}" "${BACKUP_SNAR_DIR}" "${BACKUP_MYSQL_DIR}"
     # New metadata
