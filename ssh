@@ -1,22 +1,18 @@
 #!/bin/bash
 # Simple ssh wrapper, in order to easily access:
-# 1) my home servers from my laptop when I am away from HOME_GR
+# 1) my home servers when I am away from HOME_GR
 # 2) my work pc
-# 3) my laptop
+# 3) my laptop / mobile
 
-# TODO: Find out if $1 is a box or an argument
 SSID_GR="guru"
 SSID_CZ="steele"
 SSID_SUSE="AttachmateGroup"
 SSH="/usr/bin/ssh"
-ADDR="home.tampakrap.gr -p"
-# TODO Parse the followings from ~/.sshconfig
-SERVER1_NAME="eyedea"
-SERVER1_PORT="2107"
-SERVER2_NAME="evidence"
-SERVER2_PORT="2108"
-SERVER3_NAME="everlast"
-SERVER3_PORT="2109"
+NEWARGS="$@"
+
+_check_home_gr() {
+    [[ -n $HOME_GR ]] || NEWARGS=${NEWARGS/$TARGET/$TARGET.tampakrap.gr}
+}
 
 # In the next two if blocks:
 # 1) Check if the current machine is connected through ethernet or wireless
@@ -26,7 +22,7 @@ if [[ -a /sbin/iwconfig ]]; then
 	CURRENT_SSID=${CURRENT_SSID//[[:space:]]}
 	if [[ $CURRENT_SSID == "off/any" ]]; then
 		# Not in wireless mode
-		CURRENT_SSID=''
+		CURRENT_SSID=
 	else
 		case $CURRENT_SSID in
 			$SSID_GR) HOME_GR=1 ;;
@@ -49,46 +45,53 @@ if [[ ! -n $SUSE ]] && grep -q 10.[12]0 /etc/resolv.conf; then
 	SUSE=1
 fi
 
-# Connect to HOME_GR servers
-if [[ $1 == $SERVER1_NAME ]] || [[ $1 == $SERVER2_NAME ]] || [[ $1 == $SERVER3_NAME ]]; then
-	if [[ -n $HOME_GR ]]; then
-		$SSH $@
-	else
-		case "$1" in
-			$SERVER1_NAME) $SSH $ADDR $SERVER1_PORT ;;
-			$SERVER2_NAME) $SSH $ADDR $SERVER2_PORT ;;
-			$SERVER3_NAME) $SSH $ADDR $SERVER3_PORT ;;
-		esac
-	fi
-# Connect to xzibit
-elif [[ $1 == "xzibit" ]]; then
-	if [[ -n $SUSE ]]; then
-		$SSH $@
-	else
-		echo "You need to connect to SUSE VPN first"
-	fi
-# Connect to virtuoso. Based on common sense:
-# 1) if I'm at work then virtuoso is at HOME_CZ
-# 2) if I'm at HOME_CZ, then virtuoso is also there
-# 2) if I'm at HOME_GR, then virtuoso is also there
-elif [[ $1 == "virtuoso" ]]; then
-	if [[ -n $HOME_GR ]]; then
-		$SSH 192.168.2.102
-	elif [[ -n $HOME_CZ ]]; then
-		$SSH 192.168.11.102
-	elif [[ -n $SUSE ]]; then
-		$SSH prague.tampakrap.gr
-	fi
-# Connect to apathy. Based on common sense, apathy is always with me :P
-elif [[ $1 == "apathy" ]]; then
-    if [[ -n $HOME_GR ]]; then
-        $SSH 192.168.2.110 "$@"
-    elif [[ -n $HOME_CZ ]]; then
-        $SSH 192.168.11.110 "$@"
-#    elif [[ -n $SUSE ]]; then
-#        Need to get a static IP first
-#        $SSH
+# Check if the list of arguments include any of my boxes
+for ARG in $NEWARGS; do
+    [[ "$ARG" =~ "@" ]] && NEWARGS="${ARG/*@/} -l ${ARG/@*/} ${NEWARGS/$ARG/}"
+    if [[ $ARG != "-*" ]]; then
+        TARGET=`grep $ARG /etc/hosts | awk '{ print $2 }'`
+        if [[ -n $TARGET ]]; then
+            break
+        fi
     fi
-else
-	$SSH $@
-fi
+done
+IFS=$' '
+case $TARGET in
+    eyedea) _check_home_gr ;;
+    evidence) _check_home_gr ;;
+    everlast) _check_home_gr ;;
+    canibus) _check_home_gr ;;
+    madlib) _check_home_gr ;;
+    xzibit)
+        [[ ! -n $SUSE ]] && echo "You need to connect to SUSE VPN first" && exit 1
+        ;;
+    virtuoso)
+        # Based on common sense:
+        # 1) if I'm at work or HOME_CZ then virtuoso is at HOME_CZ
+        # 2) if I'm at HOME_GR, then virtuoso is also there
+        IP="102"
+        if [[ -n $HOME_GR ]]; then
+            NEWTARGET="192.168.2.$IP"
+        elif [[ -n $HOME_CZ ]]; then
+            NEWTARGET="192.168.11.$IP"
+        else
+            NEWTARGET=$TARGET.tampakrap.gr
+        fi
+        NEWARGS=${NEWARGS/$TARGET/$NEWTARGET}
+        ;;
+    apathy)
+        # Based on common sense, apathy is always with me :P
+        IP="110"
+        if [[ -n $HOME_GR ]]; then
+            NEWTARGET="192.168.2.$IP"
+        elif [[ -n $HOME_CZ ]]; then
+            NEWTARGET="192.168.11.$IP"
+        #elif [[ -n $SUSE ]]; then
+        #    Need to get a static IP first
+        #    $SSH $NEWARGS $IP
+        fi
+        NEWARGS=${NEWARGS/$TARGET/$NEWTARGET}
+        ;;
+esac
+
+$SSH ${NEWARGS}
