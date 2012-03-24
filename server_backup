@@ -56,7 +56,7 @@ fi
 # Create tarball
 pushd "${BACKUP_TARBALLS_DIR}" > /dev/null
 tar --listed-incremental "${BACKUP_SNAR_DIR}/${HOST}_backup_${SNAR_SUFFIX}.snar" \
-    -czpf "${HOST}_$(date +%Y%m%d).tar.gz" -C "${RSYNC_TARGET}" $(ls ${RSYNC_TARGET}) 2>>${LOG}
+    -cJpf "${HOST}_$(date +%Y%m%d).tar.xz" -C "${RSYNC_TARGET}" $(ls ${RSYNC_TARGET}) 2>>${LOG}
 popd > /dev/null
 
 # Backup databases
