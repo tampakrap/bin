@@ -96,13 +96,12 @@ function _update_crons() {
 
     SOURCE_DIR="${REPOSITORY}"
 
-    for FILE in keychain-clear update-notifier server_backup gorg_update; do
+    for FILE in keychain-clear update-notifier gorg_update; do
         if [[ $SBIN =~ "${FILE}" ]]; then
             TARGET=$FILE
             case $FILE in
                 keychain-clear) DESTINATION="/etc/cron.hourly" ;;
                 update-notifier) DESTINATION="/etc/cron.weekly" ;;
-                server_backup) DESTINATION="/etc/cron.hourly" ;;
                 gorg_update) DESTINATION="/etc/cron.hourly" ;;
             esac
         fi
