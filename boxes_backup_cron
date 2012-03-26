@@ -1,0 +1,7 @@
+#!/bin/bash
+
+if [[ $HOSTNAME == "xzibit" ]]; then
+    for box in raekwon; do
+        boxes_backup $box
+    done
+fi
