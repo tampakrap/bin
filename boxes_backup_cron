@@ -3,7 +3,7 @@
 case $HOSTNAME in
     xzibit)
         for box in raekwon; do
-            boxes_backup $box
+            /usr/local/bin/boxes_backup $box
         done
         ;;
 esac
