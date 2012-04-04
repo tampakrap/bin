@@ -63,6 +63,7 @@ popd > /dev/null
 if [[ $HOST == "raekwon" ]]; then
     for database in www_gentoo_el_org www_kde_el_org quassel feedward; do
         mv ${RSYNC_TARGET}/root/mysql_backups/${database}_$(date +%Y%m%d).sql "${BACKUP_MYSQL_DIR}/${database}_$(date +%Y%m%d).sql"
+        [[ $database == "quassel" ]] && rm "${BACKUP_MYSQL_DIR}/${database}_$(date -d yesterday +%Y%m%d).sql"
     done
     rm -rf ${RSYNC_TARGET}/root
 fi
