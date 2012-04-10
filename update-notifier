@@ -2,7 +2,7 @@
 # Updates the system and mails the output to the admin
 
 echo "From: portage@$HOSTNAME.tampakrap.gr" > /tmp/upd.notify
-echo "To: root@tampakrap.gr" >> /tmp/upd.notify
+echo "To: tampakrap@gmail.com" >> /tmp/upd.notify
 echo "Subject: $HOSTNAME: emerge update, $(date +%Y-%m-%d)" >> /tmp/upd.notify
 echo "" >> /tmp/upd.notify
 eix-sync > /dev/null 2>&1
