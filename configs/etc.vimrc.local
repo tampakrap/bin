@@ -30,8 +30,8 @@ set lpl
 nnoremap <C-n> :tabnext<CR>
 nnoremap <C-p> :tabprevious<CR>
 
-set textwidth=80
-au BufRead,BufNewFile *.py,*.pyw,*.c,*.h,*.pl,*.pm set textwidth=80
+"set textwidth=80
+"au BufRead,BufNewFile *.py,*.pyw,*.c,*.h,*.pl,*.pm set textwidth=80
 
 set modeline
 
