@@ -32,7 +32,7 @@ if [[ -a /sbin/iwconfig ]]; then
 	fi
 fi
 if [[ ! -n $CURRENT_SSID ]]; then
-	CURRENT_IP=`/sbin/ifconfig eth0 | grep 'inet' | awk '{ print $2}' | cut -d. -f1-3`
+	CURRENT_IP=`/bin/ifconfig eth0 | grep 'inet' | awk '{ print $2}' | cut -d. -f1-3`
 	case $CURRENT_IP in
 		"192.168.2") HOME_GR=1 ;;
 		"192.168.11") HOME_CZ=1 ;;
