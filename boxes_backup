@@ -55,12 +55,6 @@ else
     cp "${BACKUP_SNAR_DIR}/${HOST}_backup_full.snar" "${BACKUP_SNAR_DIR}/${HOST}_backup_${SNAR_SUFFIX}.snar"
 fi
 
-# Create tarball
-pushd "${BACKUP_TARBALLS_DIR}" > /dev/null
-tar --listed-incremental "${BACKUP_SNAR_DIR}/${HOST}_backup_${SNAR_SUFFIX}.snar" \
-    -cJpf "${HOST}_$(date +%Y%m%d).tar.xz" -C "${RSYNC_TARGET}" $(ls ${RSYNC_TARGET}) 2>>${LOG}
-popd > /dev/null
-
 # Backup databases
 if [[ $HOST == "raekwon" ]]; then
     for database in www_gentoo_el_org www_kde_el_org quassel feedward; do
@@ -69,5 +63,11 @@ if [[ $HOST == "raekwon" ]]; then
     done
     rm -rf ${RSYNC_TARGET}/root
 fi
+
+# Create tarball
+pushd "${BACKUP_TARBALLS_DIR}" > /dev/null
+tar --listed-incremental "${BACKUP_SNAR_DIR}/${HOST}_backup_${SNAR_SUFFIX}.snar" \
+    -cJpf "${HOST}_$(date +%Y%m%d).tar.xz" -C "${RSYNC_TARGET}" $(ls ${RSYNC_TARGET}) 2>>${LOG}
+popd > /dev/null
 
 echo "Finished successfully" >> ${LOG}
