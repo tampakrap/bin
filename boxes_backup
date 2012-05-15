@@ -44,9 +44,11 @@ if [[ $(date +%d) == '01' ]] ; then
     # New metadata
     SNAR_SUFFIX="full"
     # Cleanup old backups
-    rm -rf ${BACKUP_DIR}/tarballs/$(date --date='3 months ago' +%Y%m)
-    rm -rf ${BACKUP_DIR}/snar/$(date --date='3 months ago' +%Y%m)
-    rm -rf ${BACKUP_DIR}/mysql/$(date --date='3 months ago' +%Y%m)
+    OLD_BACKUPS_DATE=$(date --date="$2 months ago" +%Y%m)
+    rm -rf ${BACKUP_DIR}/tarballs/${OLD_BACKUPS_DATE}
+    rm -rf ${BACKUP_DIR}/snar/${OLD_BACKUPS_DATE}
+    rm -rf ${BACKUP_DIR}/mysql/${OLD_BACKUPS_DATE}
+    rm ${BACKUP_DIR}/mysql/*/quassel*
 else
     # Today's metadata based on the first one
     SNAR_SUFFIX=$(date +%Y%m%d)
