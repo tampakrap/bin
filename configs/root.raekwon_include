@@ -8,6 +8,7 @@
 + /var/www/www.gentoo-el.org
 + /var/www/gorg.gentoo-el.org
 + /var/www/www.kde-el.org
++ /var/www/www.os-el.gr
 - /bin
 - /boot
 - /dev
