@@ -10,12 +10,6 @@ Host tyranus
 User linuxteam
 Port 3030
 
-Host vectivus
-Port 3031
-
-Host bane
-Port 3032
-
 # Gentoo-el
 Host infernus infernus.tomkap.gr
 User gentoo
