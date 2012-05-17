@@ -2,7 +2,7 @@
 # Updates the info of the gentoo servers. Also it merges files under /etc/hosts.d in /etc/hosts
 
 try:
-	from BeautifulSoup import BeautifulSoup
+	from bs4 import BeautifulSoup
 except ImportError:
 	print "Please emerge -av dev-python/beautifulsoup"
 	exit()
