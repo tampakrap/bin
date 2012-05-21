@@ -15,4 +15,5 @@
 - /sys
 - /tmp
 - /usr/portage/*
+- /usr/tmp/*
 - /var/tmp/*
