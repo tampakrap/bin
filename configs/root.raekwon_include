@@ -2,6 +2,7 @@
 + /etc
 + /home
 + /lib*
++ /root
 + /sbin
 + /usr
 + /var
@@ -11,7 +12,6 @@
 - /lib*
 - /mnt
 - /proc
-- /root
 - /sys
 - /tmp
 - /usr/portage/*

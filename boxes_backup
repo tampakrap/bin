@@ -6,6 +6,7 @@ HOMEDIR="/home/tampakrap"
 BACKUP_DIR="${HOMEDIR}/Others/backups/${HOST}"
 BACKUP_TARBALLS_DIR="${BACKUP_DIR}/tarballs/$(date +%Y%m)"
 BACKUP_SNAR_DIR="${BACKUP_DIR}/snar/$(date +%Y%m)"
+BACKUP_MYSQL_DIR="${BACKUP_DIR}/mysql/$(date +%Y%m)"
 RSYNC_USER="${HOSTNAME}"
 RSYNC_PASSFILE="/root/.${HOST}rsyncpas"
 RSYNC_INCLUDE="/root/.${HOST}_include"
@@ -46,10 +47,21 @@ if [[ $(date +%d) == '01' ]] ; then
     OLD_BACKUPS_DATE=$(date --date="$2 months ago" +%Y%m)
     rm -rf ${BACKUP_DIR}/tarballs/${OLD_BACKUPS_DATE}
     rm -rf ${BACKUP_DIR}/snar/${OLD_BACKUPS_DATE}
+    rm -rf ${BACKUP_DIR}/mysql/${OLD_BACKUPS_DATE}
 else
     # Today's metadata based on the first one
     SNAR_SUFFIX=$(date +%Y%m%d)
     cp "${BACKUP_SNAR_DIR}/${HOST}_backup_full.snar" "${BACKUP_SNAR_DIR}/${HOST}_backup_${SNAR_SUFFIX}.snar"
+fi
+
+# Backup databases
+if [[ ${HOST} == "raekwon" ]]; then
+    for database in www_gentoo_el_org www_kde_el_org quassel feedward www_os_el_gr; do
+        mv "${RSYNC_TARGET}/root/mysql_backups/${database}-$(date +%Y%m%d).sql" ${BACKUP_MYSQL_DIR}
+    done
+    rm -rf ${RSYNC_TARGET}/root/mysql_backups
+    rm "${BACKUP_MYSQL_DIR}/quassel-$(date -d yesterday +%Y%m%d).sql"
+    rm "${RSYNC_TARGET}/var/lib/mysql/quassel"
 fi
 
 # Create tarball
