@@ -17,3 +17,4 @@
 - /usr/portage/*
 - /usr/tmp/*
 - /var/tmp/*
+- /var/lib/mysql/quassel/*

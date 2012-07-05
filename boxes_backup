@@ -12,7 +12,7 @@ RSYNC_PASSFILE="/root/.${HOST}rsyncpas"
 RSYNC_INCLUDE="/root/.${HOST}_include"
 RSYNC_OPTIONS="--progress --stats -aHuvh --delete-after --delete-excluded --exclude=**~ --exclude=**/lost+found*/"
 RSYNCD_MODULE="${HOSTNAME}"
-RSYNC_TARGET="${BACKUP_DIR}/${HOST}_uncompressed"
+RSYNC_TARGET="${BACKUP_DIR}/uncompressed"
 LOCK="/var/lock/backup/${HOST}.lock"
 LOG="/var/log/backup/${HOST}.log"
 
@@ -40,7 +40,7 @@ rsync \
 
 if [[ $(date +%d) == '01' ]] ; then
     # Create new month's dirs
-    mkdir -p "${BACKUP_TARBALLS_DIR}" "${BACKUP_SNAR_DIR}"
+    mkdir -p "${BACKUP_TARBALLS_DIR}" "${BACKUP_SNAR_DIR}" "${BACKUP_MYSQL_DIR}"
     # New metadata
     SNAR_SUFFIX="full"
     # Cleanup old backups
@@ -59,9 +59,13 @@ if [[ ${HOST} == "raekwon" ]]; then
     for database in www_gentoo_el_org www_kde_el_org quassel feedward www_os_el_gr; do
         mv "${RSYNC_TARGET}/root/mysql_backups/${database}-$(date +%Y%m%d).sql" ${BACKUP_MYSQL_DIR}
     done
-    rm -rf ${RSYNC_TARGET}/root/mysql_backups
-    rm "${BACKUP_MYSQL_DIR}/quassel-$(date -d yesterday +%Y%m%d).sql"
-    rm "${RSYNC_TARGET}/var/lib/mysql/quassel"
+    # Actions to save space
+    # Keep only the most recent quassel DB dump
+    rm "${BACKUP_MYSQL_DIR}/quassel-$(date -d yesterday +%Y%m%d).tar.xz"
+    # Put the quassel db in xz tarball
+    pushd "${BACKUP_MYSQL_DIR}" > /dev/null
+    tar -cJpf "quassel-$(date +%Y%m%d).tar.xz" \
+        "${MYSQL_BACKUP_DIR}/quassel-$(date +%Y%m%d).sql" 2>>${LOG}
 fi
 
 # Create tarball
