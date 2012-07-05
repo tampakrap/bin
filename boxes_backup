@@ -64,8 +64,9 @@ if [[ ${HOST} == "raekwon" ]]; then
     rm "${BACKUP_MYSQL_DIR}/quassel-$(date -d yesterday +%Y%m%d).tar.xz"
     # Put the quassel db in xz tarball
     pushd "${BACKUP_MYSQL_DIR}" > /dev/null
-    tar -cJpf "quassel-$(date +%Y%m%d).tar.xz" \
-        "${MYSQL_BACKUP_DIR}/quassel-$(date +%Y%m%d).sql" 2>>${LOG}
+    tar -cJpf "quassel-$(date +%Y%m%d).tar.xz" "quassel-$(date +%Y%m%d).sql" 2>>${LOG}
+    rm "quassel-$(date +%Y%m%d).sql"
+    popd "${BACKUP_MYSQL_DIR}" > /dev/null
 fi
 
 # Create tarball
