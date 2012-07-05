@@ -105,12 +105,12 @@ for repo in `ls -d */`; do
         pushd $repo > /dev/null
         einfo "Checking $repo repository"
         REPO_GIT_EMAIL=`grep email .git/config | awk -F'= ' '{ print $2 }'`
-        if [[ -n $REPO_GIT_EMAIL ]] && [[ $REPO_GIT_EMAIL != "tampakrap@linuxteam.cs.teilar.gr" ]]; then
-            sed -i -e "s:${REPO_GIT_EMAIL}:tampakrap@linuxteam.cs.teilar.gr:" .git/config &&
+        if [[ -n $REPO_GIT_EMAIL ]] && [[ $REPO_GIT_EMAIL != "tampakrap@linuxteam.teilar.gr" ]]; then
+            sed -i -e "s:${REPO_GIT_EMAIL}:tampakrap@linuxteam.teilar.gr:" .git/config &&
             ewarn "Corrected LinuxTeam mail for $repo repository"
         fi
         [[ ! -n $REPO_GIT_EMAIL ]] && ( \
-            git config user.email "linuxteam.cs.teilar.gr" &&
+            git config user.email "linuxteam.teilar.gr" &&
             ewarn "Added LinuxTeam mail for $repo repository" )
         popd > /dev/null
     fi
