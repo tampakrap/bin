@@ -17,7 +17,7 @@ case $1 in
         ;;
 	apathy) MAC="B0:D0:9C:17:A1:2C" ;;
 	madlib) ;;
-	eyedea) MAC="08:00:36:36:2B:04" ;;
+	eyedea) MAC="08:00:36:36:2B:04" MAC="00:80:48:21:0c:4f" ;;
 	evidence) MAC="00:E0:4D:03:7E:50" ;;
 	everlast) MAC="00:50:FC:FA:05:C9" ;;
 	*)
