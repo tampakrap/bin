@@ -56,18 +56,17 @@ fi
 
 # Backup databases
 if [[ ${HOST} == "raekwon" ]]; then
-    for database in www_gentoo_el_org www_kde_el_org feedward www_os_el_gr; do
+    for database in www_gentoo_el_org www_kde_el_org quassel feedward www_os_el_gr; do
         mv "${RSYNC_TARGET}/root/mysql_backups/${database}-$(date +%Y%m%d).sql" ${BACKUP_MYSQL_DIR}
     done
-    ### BACKUPS FOR QUASSEL ARE DISABLED ###
     # Actions to save space
     # Keep only the most recent quassel DB dump
-    #rm "${BACKUP_MYSQL_DIR}/quassel-$(date -d yesterday +%Y%m%d).tar.xz"
+    rm "${BACKUP_MYSQL_DIR}/quassel-$(date -d yesterday +%Y%m%d).tar.xz"
     # Put the quassel db in xz tarball
-    #pushd "${BACKUP_MYSQL_DIR}" > /dev/null
-    #tar -cJpf "quassel-$(date +%Y%m%d).tar.xz" \
-    #    "${MYSQL_BACKUP_DIR}/quassel-$(date +%Y%m%d).sql" 2>>${LOG}
-    ### BACKUPS FOR QUASSEL ARE DISABLED ###
+    pushd "${BACKUP_MYSQL_DIR}" > /dev/null
+    tar -cJpf "quassel-$(date +%Y%m%d).tar.xz" "quassel-$(date +%Y%m%d).sql" 2>>${LOG}
+    rm "quassel-$(date +%Y%m%d).sql"
+    popd "${BACKUP_MYSQL_DIR}" > /dev/null
 fi
 
 # Create tarball
