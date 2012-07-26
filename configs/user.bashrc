@@ -21,3 +21,7 @@ eval `keychain --quiet --eval --agents ssh id_dsa`
 PAGER=/usr/bin/less
 EDITOR=/usr/bin/vim
 alias isc='osc -A https://api.suse.de/'
+alias diff=colordiff
+function gitdiff () {
+    git diff $@ | colordiff | less -R
+}
