@@ -12,7 +12,7 @@ USER="tampakrap"
 
 function _repository() {
     if [[ -n ${HOMEDIR} ]]; then
-        REPOSITORY="/home/$USER/Source_Code/raekwon/scripts"
+        REPOSITORY="/home/$USER/Source_Code/tampakrap/scripts"
     else
         REPOSITORY="/var/repos/scripts"
         einfo "Updating repository"
