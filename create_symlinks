@@ -115,38 +115,38 @@ function _update_crons() {
 case $HOSTNAME in
     canibus)
         SBIN="cleanup create_symlinks emerge-tmpfs host-update update"
-        BIN="create_repolinks git packagelist ssh wakeonlan"
+        BIN="create_repolinks git packagelist random_password ssh wakeonlan"
         HOMEDIR=1
         ;;
     virtuoso)
         SBIN="cleanup create_symlinks emerge-tmpfs host-update update"
-        BIN="create_repolinks music-sync git packagelist ssh wakeonlan"
+        BIN="create_repolinks music-sync git packagelist random_password ssh wakeonlan"
         HOMEDIR=1
         WORK=1
         ;;
     madlib)
         SBIN="cleanup create_symlinks emerge-tmpfs host-update update"
-        BIN="wakeonlan"
+        BIN="random_password wakeonlan"
         ;;
     eyedea)
         SBIN="cleanup create_symlinks emerge-tmpfs host-update update-notifier"
-        BIN="wakeonlan"
+        BIN="random_password wakeonlan"
         ;;
     evidence)
         SBIN="cleanup create_symlinks emerge-tmpfs host-update update-notifier"
-        BIN="wakeonlan"
+        BIN="random_password wakeonlan"
         ;;
     everlast)
         SBIN="cleanup create_symlinks emerge-tmpfs host-update update-notifier"
-        BIN="wakeonlan"
+        BIN="random_password wakeonlan"
         ;;
     raekwon)
         SBIN="cleanup create_symlinks emerge-tmpfs gorg_update update-notifier"
-        BIN="wakeonlan"
+        BIN="random_password wakeonlan"
         ;;
     xzibit)
-        SBIN="cleanup create_symlinks emerge-tmpfs host-update keychain-clear boxes_backup boxes_backup_cron update"
-        BIN="create_repolinks git packagelist ssh wakeonlan"
+        SBIN="boxes_backup boxes_backup_cron cleanup create_symlinks emerge-tmpfs host-update keychain-clear update"
+        BIN="create_repolinks git packagelist random_password ssh wakeonlan"
         HOMEDIR=1
         WORK=1
         ;;
