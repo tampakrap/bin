@@ -1,0 +1,33 @@
+#!/bin/bash
+# Compares the puppet vim-syntax files.
+# 1) If they are different, this script creates a new tarball, uploads it
+# to dev.gentoo.org and updates the ebuild accordingly
+# 2) If they are not different, it just renames the snapshot and the ebuild
+
+OLD=$1
+NEW=$2
+TMP="/tmp/$0"
+
+[[ -d $TMP ]] && rm -rf $TMP
+mkdir -p $TMP/{$OLD,$NEW}
+
+for PV in $OLD $NEW; do
+    pushd $TMP/$PV > /dev/null
+    DISTFILES=/usr/portage/distfiles
+    [[ -s $DISTFILES/puppet-$PV.gem ]] || wget http://gems.rubyforge.org/gems/puppet-$PV.gem -P $DISTFILES
+    gem unpack $DISTFILES/puppet-$PV.gem
+    if [[ $PV == $OLD ]]; then
+        [[ -s $DISTFILES/puppet-syntax-$PV.tar.bz2 ]] || wget http://dev.gentoo.org/~tampakrap/tarballs/puppet-syntax-$PV.tar.bz2 -P $DISTFILES
+        tar xvjpf /usr/portage/distfiles/puppet-syntax-$PV.tar.bz2
+    else
+        cp -r puppet-$PV/ext/vim puppet-syntax-$PV
+        tar cvjpf puppet-syntax-$PV.tar.bz2 puppet-syntax-$PV
+        scp puppet-syntax-$PV.tar.bz2 woodpecker:~/public_html/tarballs
+    fi
+    popd > /dev/null
+done
+
+pushd ~/Source_Code/gentoo/gentoo-el/app-vim/puppet-syntax > /dev/null
+git mv puppet-syntax-$OLD.ebuild puppet-syntax-$NEW.ebuild
+repoman manifest
+popd > /dev/null
