@@ -5,17 +5,21 @@
 # 3) For KDE repos, it symlinks the repo from distdir to kde repos dir.
 # 4) For SUSE repos, it replaces git user.email with the suse mail (or creates it)
 # The script needs a in ~/.gitconfig similar to the one included in this repository.
+# TODO: A lot of code duplication, needs functions ASAP
+# TODO: Check repos and mail in TAMPAKRAP_REPO_DIR
+# TODO: Fix github repos as well
+# TODO: Add pushUrl instead of sed the URL
 
 # Headers
 source /etc/make.conf
 . /etc/init.d/functions.sh
 
 # Variables
-REPO_DIR="/home/tampakrap/Source_Code/"
-GENTOO_REPO_DIR="${REPO_DIR}gentoo/"
-KDE_REPO_DIR="${REPO_DIR}kde/"
-SUSE_REPO_DIR="${REPO_DIR}suse/"
-LINUXTEAM_REPO_DIR="${REPO_DIR}linuxteam/"
+REPO_DIR="/home/tampakrap/Source_Code"
+GENTOO_REPO_DIR="${REPO_DIR}/gentoo"
+KDE_REPO_DIR="${REPO_DIR}/kde"
+SUSE_REPO_DIR="${REPO_DIR}/suse"
+LINUXTEAM_REPO_DIR="${REPO_DIR}/linuxteam"
 OVERLAY_DIR="/var/lib/layman/"
 
 if [[ $UID == 0 ]]; then
@@ -33,9 +37,9 @@ for repo in `ls -d */`; do
 		sed -i -r "s#[^[:space:]]*git[[:digit:]]?.(overlays.)?gentoo.org[/:]#gentoo:#g" .git/config &&
 		ewarn "Gentoo Git URL corrected for $repo overlay"
 	fi
-	[[ -L ${GENTOO_REPO_DIR}$repo ]] || ( \
-		rm -rf ${GENTOO_REPO_DIR}$repo &&
-		ln -s ${OVERLAY_DIR}$repo ${GENTOO_REPO_DIR} &&
+	[[ -L ${GENTOO_REPO_DIR}/$repo ]] || ( \
+		rm -rf ${GENTOO_REPO_DIR}/$repo &&
+		ln -s ${OVERLAY_DIR}/$repo ${GENTOO_REPO_DIR} &&
 		ewarn "New symlink for $repo overlay" )
 	popd > /dev/null
 done
@@ -43,7 +47,7 @@ done
 einfo "### Gentoo Repositories ###"
 cd $DISTDIR/egit-src
 for repo in `ls -d */`; do
-	if grep -q -e gentoo.org -e gentoo: $repo.git/config; then
+	if grep -q -e gentoo.org -e gentoo: $repo/.git/config; then
 		repo=${repo%/}
 		pushd $repo > /dev/null
 		einfo "Checking $repo repository"
@@ -52,8 +56,8 @@ for repo in `ls -d */`; do
 			ewarn "Gentoo Git URL corrected for $repo repository"
 		fi
 		[[ -L ${GENTOO_REPO_DIR}$repo ]] || ( \
-			rm -rf ${GENTOO_REPO_DIR}$repo && 
-			ln -s ${DISTDIR}/egit-src/$repo ${GENTOO_REPO_DIR} && 
+			rm -rf ${GENTOO_REPO_DIR}/$repo &&
+			ln -s ${DISTDIR}/egit-src/$repo ${GENTOO_REPO_DIR} &&
 			ewarn "New symlink for $repo repository" )
 		popd > /dev/null
 	fi
@@ -62,7 +66,7 @@ done
 einfo "### KDE Rrepositories ###"
 cd $DISTDIR/egit-src
 for repo in `ls -d */`; do
-	if grep -q -e kde.org -e kde: $repo.git/config; then
+	if grep -q -e kde.org -e kde: $repo/.git/config; then
 		repo=${repo%/}
 		pushd $repo > /dev/null
 		einfo "Checking $repo repository"
@@ -70,8 +74,8 @@ for repo in `ls -d */`; do
 			sed -i -r "s#[^[:space:]]*git[[:digit:]]?.kde.org[/:]#kde:#g" .git/config &&
 			ewarn "KDE Git URL corrected for $repo"
 		fi
-		[[ -L ${KDE_REPO_DIR}$repo ]] || ( \
-			rm -rf ${KDE_REPO_DIR}$repo &&
+		[[ -L ${KDE_REPO_DIR}/$repo ]] || ( \
+			rm -rf ${KDE_REPO_DIR}/$repo &&
 			ln -s ${DISTDIR}/egit-src/$repo ${KDE_REPO_DIR} &&
 			ewarn "New symlink for $repo repository" )
 		popd > /dev/null
@@ -97,7 +101,7 @@ for repo in `ls -d */` `ls -d tampakrap/*/` `ls -d conversions/*/`; do
 	fi
 done
 
-einfo "### LinuxTeam REPOS ###"
+einfo "### LinuxTeam Repositories ###"
 cd $LINUXTEAM_REPO_DIR
 for repo in `ls -d */`; do
     repo=${repo%/}
@@ -116,7 +120,7 @@ for repo in `ls -d */`; do
     fi
 done
 
-einfo "### CLEANUP BAD SYMLINKS ###"
+einfo "### CLEAN BAD SYMLINKS ###"
 for dir in ${GENTOO_REPO_DIR} ${KDE_REPO_DIR}; do
 	cd $dir
 	for item in `ls -1`; do
