@@ -6,9 +6,10 @@
 # 4) For SUSE repos, it replaces git user.email with the suse mail (or creates it)
 # The script needs a in ~/.gitconfig similar to the one included in this repository.
 # TODO: A lot of code duplication, needs functions ASAP
-# TODO: Check repos and mail in TAMPAKRAP_REPO_DIR
+# TODO: Check repos and git.mail in TAMPAKRAP_REPO_DIR
 # TODO: Fix github repos as well
 # TODO: Add pushUrl instead of sed the URL
+# TODO: Doesn't handle the case that a REPO_DIR is missing
 
 # Headers
 source /etc/make.conf
