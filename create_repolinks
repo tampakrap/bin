@@ -9,7 +9,9 @@
 # TODO: Check repos and git.mail in TAMPAKRAP_REPO_DIR
 # TODO: Fix github repos as well
 # TODO: Add pushUrl instead of sed the URL
+# TODO: Fix repos inside GENTOO_REPO_DIR as well
 # TODO: Doesn't handle the case that a REPO_DIR is missing
+# TODO: Check if egit-src exists
 
 # Headers
 source /etc/make.conf
