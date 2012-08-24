@@ -15,3 +15,5 @@
 	insteadOf = gentoo:
 [url "git@git.overlays.gentoo.org:"]
 	pushInsteadOf = gentoo:
+[color]
+    ui = true
