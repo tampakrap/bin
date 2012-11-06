@@ -10,34 +10,36 @@ DISTFILES="/usr/portage/distfiles"
 [[ -d $TMP ]] && rm -rf $TMP
 mkdir -p $TMP/{$OLD,$NEW}
 
-pushd $TMP/$OLD > /dev/null
-    # Get the old puppet-syntax tarball and extract it
-    [[ -s $DISTFILES/puppet-syntax-$OLD.tar.gz ]] || wget http://dev.gentoo.org/~tampakrap/tarballs/puppet-syntax-$OLD.tar.gz -P $DISTFILES
-    tar xvzf $DISTFILES/puppet-syntax-$OLD.tar.gz
-popd > /dev/null
+# Get the old puppet-syntax tarball and extract it
+[[ -s $DISTFILES/puppet-syntax-$OLD.tar.gz ]] || \
+    wget http://dev.gentoo.org/~tampakrap/tarballs/puppet-syntax-$OLD.tar.gz -P $DISTFILES
+tar xvzf $DISTFILES/puppet-syntax-$OLD.tar.gz -C $TMP/$OLD
 
-pushd $TMP/$NEW > /dev/null
-    # Get the new puppet tarball and extract it
-    [[ -s $DISTFILES/puppet-$NEW.tar.gz ]] || wget http://www.puppetlabs.com/downloads/puppet/puppet-$NEW.tar.gz -P $DISTFILES
-    tar xvzf $DISTFILES/puppet-$NEW.tar.gz
-    # Compare the vim-syntax files
-    for plugindir in indent syntax ftdetect ftplugin; do
-        diff -ru $TMP/$OLD/puppet-syntax-$OLD/$plugindir/puppet.vim puppet-$NEW/ext/vim/$plugindir/puppet.vim >> $TMP/diffs
-    done
-    if [[ -s $TMP/diffs ]]; then
-        # Files have changed, create and upload new tarball
-        cp -r puppet-$NEW/ext/vim puppet-syntax-$NEW
-        tar cvzf puppet-syntax-$NEW.tar.gz puppet-syntax-$NEW
-        scp puppet-syntax-$NEW.tar.gz woodpecker:~/public_html/tarballs
-    else
-        echo "The files haven't changed, exiting"
-        exit
-    fi
-popd > /dev/null
+# Get the new puppet tarball and extract it
+[[ -s $DISTFILES/puppet-$NEW.tar.gz ]] || \
+    wget http://www.puppetlabs.com/downloads/puppet/puppet-$NEW.tar.gz -P $DISTFILES
+tar xvzf $DISTFILES/puppet-$NEW.tar.gz -C $TMP/$NEW
 
-pushd ~/Source_Code/gentoo/gentoo-x86/app-vim/puppet-syntax > /dev/null
-cp puppet-syntax-$OLD.ebuild puppet-syntax-$NEW.ebuild
-cvs add puppet-syntax-$NEW.ebuild
-repoman manifest
-repoman full -d
-popd > /dev/null
+# Compare the vim-syntax files
+for plugindir in indent syntax ftdetect ftplugin; do
+    diff -ru $TMP/$OLD/puppet-syntax-$OLD/$plugindir/puppet.vim \
+        $TMP/$NEW/puppet-$NEW/ext/vim/$plugindir/puppet.vim >> $TMP/diffs
+done
+
+if [[ -s $TMP/diffs ]]; then
+    # Files have changed, create and upload new tarball
+    pushd $TMP/$NEW > /dev/null
+    cp -r puppet-$NEW/ext/vim puppet-syntax-$NEW
+    tar cvzf puppet-syntax-$NEW.tar.gz puppet-syntax-$NEW
+    scp puppet-syntax-$NEW.tar.gz woodpecker:~/public_html/tarballs
+    popd > /dev/null
+    # Version bump
+    pushd ~/Source_Code/gentoo/gentoo-x86/app-vim/puppet-syntax > /dev/null
+    cp puppet-syntax-$OLD.ebuild puppet-syntax-$NEW.ebuild
+    cvs add puppet-syntax-$NEW.ebuild
+    repoman manifest
+    repoman full -d
+    popd > /dev/null
+else
+    echo "The files haven't changed, exiting"
+fi
