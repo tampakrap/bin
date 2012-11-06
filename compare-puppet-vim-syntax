@@ -22,7 +22,7 @@ pushd $TMP/$NEW > /dev/null
     tar xvzf $DISTFILES/puppet-$NEW.tar.gz
     # Compare the vim-syntax files
     for plugindir in indent syntax ftdetect ftplugin; do
-        diff -ru puppet-$NEW/ext/vim/$plugindir/puppet.vim $TMP/$OLD/puppet-syntax-$OLD/$plugindir/puppet.vim >> $TMP/diffs
+        diff -ru $TMP/$OLD/puppet-syntax-$OLD/$plugindir/puppet.vim puppet-$NEW/ext/vim/$plugindir/puppet.vim >> $TMP/diffs
     done
     if [[ -s $TMP/diffs ]]; then
         # Files have changed, create and upload new tarball
