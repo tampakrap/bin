@@ -1,13 +1,11 @@
 #!/bin/bash
-# Compares the puppet vim-syntax files.
-# 1) If they are different, this script creates a new tarball, uploads it
-# to dev.gentoo.org and updates the ebuild accordingly
-# 2) If they are not different, it just renames the snapshot and the ebuild
+# Compares the puppet vim-syntax files, and if they are different, it creates
+# a new tarball, uploads it to dev.gentoo.org and updates the ebuild accordingly
 
 OLD=$1
 NEW=$2
 TMP="/tmp/$0"
-DISTFILES=/usr/portage/distfiles
+DISTFILES="/usr/portage/distfiles"
 
 [[ -d $TMP ]] && rm -rf $TMP
 mkdir -p $TMP/{$OLD,$NEW}
@@ -22,9 +20,19 @@ for PV in $OLD $NEW; do
         [[ -s $DISTFILES/puppet-syntax-$PV.tar.gz ]] || wget http://dev.gentoo.org/~tampakrap/tarballs/puppet-syntax-$PV.tar.gz -P $DISTFILES
         tar xvzf /usr/portage/distfiles/puppet-syntax-$PV.tar.gz
     else
-        cp -r puppet-$PV/ext/vim puppet-syntax-$PV
-        tar cvzf puppet-syntax-$PV.tar.bz2 puppet-syntax-$PV
-        scp puppet-syntax-$PV.tar.bz2 woodpecker:~/public_html/tarballs
+        # Compare the files
+        for plugindir in indent syntax ftdetect ftplugin; do
+            diff -ru puppet-$PV/ext/vim/$plugindir/puppet.vim $TMP/$OLD/puppet-syntax-$OLD/$plugindir/puppet.vim >> $TMP/diffs
+        done
+        if [[ -s $TMP/diffs ]]; then
+            # Files have changed, create and upload new tarball
+            cp -r puppet-$PV/ext/vim puppet-syntax-$PV
+            tar cvzf puppet-syntax-$PV.tar.bz2 puppet-syntax-$PV
+            scp puppet-syntax-$PV.tar.bz2 woodpecker:~/public_html/tarballs
+        else
+            echo "The files haven't changed, exiting"
+            exit
+        fi
     fi
     popd > /dev/null
 done
