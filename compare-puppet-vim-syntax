@@ -27,8 +27,8 @@ pushd $TMP/$NEW > /dev/null
     if [[ -s $TMP/diffs ]]; then
         # Files have changed, create and upload new tarball
         cp -r puppet-$NEW/ext/vim puppet-syntax-$NEW
-        tar cvzf puppet-syntax-$NEW.tar.bz2 puppet-syntax-$NEW
-        scp puppet-syntax-$NEW.tar.bz2 woodpecker:~/public_html/tarballs
+        tar cvzf puppet-syntax-$NEW.tar.gz puppet-syntax-$NEW
+        scp puppet-syntax-$NEW.tar.gz woodpecker:~/public_html/tarballs
     else
         echo "The files haven't changed, exiting"
         exit
