@@ -12,14 +12,14 @@ mkdir -p $TMP/{$OLD,$NEW}
 
 for PV in $OLD $NEW; do
     pushd $TMP/$PV > /dev/null
-    # Get the puppet tarball and extract it
-    [[ -s $DISTFILES/puppet-$PV.tar.gz ]] || wget http://www.puppetlabs.com/downloads/puppet/puppet-$PV.tar.gz -P $DISTFILES
-    tar xvzf $DISTFILES/puppet-$PV.tar.gz
     if [[ $PV == $OLD ]]; then
         # Get the old puppet-syntax tarball and extract it
         [[ -s $DISTFILES/puppet-syntax-$PV.tar.gz ]] || wget http://dev.gentoo.org/~tampakrap/tarballs/puppet-syntax-$PV.tar.gz -P $DISTFILES
-        tar xvzf /usr/portage/distfiles/puppet-syntax-$PV.tar.gz
+        tar xvzf $DISTFILES/puppet-syntax-$PV.tar.gz
     else
+        # Get the puppet tarball and extract it
+        [[ -s $DISTFILES/puppet-$PV.tar.gz ]] || wget http://www.puppetlabs.com/downloads/puppet/puppet-$PV.tar.gz -P $DISTFILES
+        tar xvzf $DISTFILES/puppet-$PV.tar.gz
         # Compare the files
         for plugindir in indent syntax ftdetect ftplugin; do
             diff -ru puppet-$PV/ext/vim/$plugindir/puppet.vim $TMP/$OLD/puppet-syntax-$OLD/$plugindir/puppet.vim >> $TMP/diffs
