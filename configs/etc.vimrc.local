@@ -14,9 +14,12 @@ set nu
 " {{{ TAB
 set ts=4
 set sw=4
-"set sts=4
+set sts=4
 set noet
 " }}}
+
+autocmd FileType puppet set sts=2 sw=2 ts=2
+autocmd FileType ruby set sts=2 sw=2 ts=2
 
 " {{{ INDENT
 set ai
