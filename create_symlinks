@@ -24,7 +24,7 @@ function _repository() {
         [[ -n $CHANGED ]] && einfo "Restarting the script" && $0 && exit
     fi
 
-    [[ -n ${WORK} ]] && WORK_REPOSITORY="/home/$USER/Source_Code/suse/$USER/scripts"
+    [[ -n ${WORK} ]] && WORK_REPOSITORY="/home/$USER/Source_Code/suse/tchatzimichos/scripts"
 
     source $REPOSITORY/create_symlinks_functions
 }
