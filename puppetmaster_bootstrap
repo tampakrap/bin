@@ -92,8 +92,8 @@ if [[ -d ${CLONE_REPOSITORY_PATH} ]]; then
 else
     git clone ${LINK} ${CLONE_REPOSITORY_PATH}
     pushd ${CLONE_REPOSITORY_PATH}
-    [[ -n ${IPV6} ]] && find ${CLONE_REPOSITORY_PATH}/.git -type f -name config -exec sed -i -e "s/github.com/${GITHUB_URL}/g" {} \;
     git submodule init
+    [[ -n ${IPV6} ]] && find .git -type f -name config -exec sed -i -e "s/github.com/${GITHUB_IPV6}/g" {} \;
     git submodule update
     popd
 fi
