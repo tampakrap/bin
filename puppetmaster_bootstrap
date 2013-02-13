@@ -2,7 +2,6 @@
 
 DEFAULT_SITEPP="/etc/puppet/manifests/site.pp"
 DEFAULT_MODULEPATH="/etc/puppet/modules"
-GITHUB_URL="github.com"
 
 help() {
     echo
@@ -12,13 +11,13 @@ help() {
     echo "-s <path> Path of manifests/site.pp. Default is ${DEFAULT_SITEPP}."
     echo "-m <path> Modulepath. Default is ${DEFAULT_MODULEPATH}. If they are more than one, use quotes and separate them with semicolons."
     echo "-r <path> Path of the puppet repository."
-    echo "-l <url>  URL from github (namespace/repo_name)"
-    echo "-t        Optional clone of the puppet repository to /tmp, and then copy to final destination."
+    echo "-l <url>  Git URL of the repository"
+    echo "-t        Clone the puppet repository to /tmp, and then copy to final destination."
     echo "-u        Update the repository."
     echo "-d        Delete configs/packages before bootstrapping."
     echo "-6        Master is IPv6 only."
     echo
-    exit
+    exit 1
 }
 
 if [[ $1 == "--help" ]]; then
@@ -54,7 +53,10 @@ if [[ -z ${REPOSITORY} ]] || [[ -z ${LINK} ]]; then
     help
 fi
 
-[[ -n ${IPV6} ]] && GITHUB_URL="github.iserv.nl"
+if [[ -n ${IPV6} ]] && [[ ${LINK} == *github.com* ]]; then
+    GITHUB_IPV6="github.iserv.nl"
+    LINK=${LINK/github.com/GITHUB_IPV6}
+fi
 
 if [[ -n ${TEMPREPOSITORY} ]]; then
     CLONE_REPOSITORY_PATH="/tmp/puppet_tmp"
@@ -75,7 +77,11 @@ if [[ -n ${DELETE} ]]; then
     [ -f /etc/init.d/${PUPPETMASTER_INIT} ] && /etc/init.d/${PUPPETMASTER} stop
 fi
 
-USE="old-output" emerge app-admin/puppet
+if [[ -f /etc/Gentoo-release ]]; then
+    USE="old-output" emerge app-admin/puppet
+elif [[ -f /etc/SuSE-release ]]; then
+    zypper in -y puppet-server
+fi
 
 if [[ -d ${CLONE_REPOSITORY_PATH} ]]; then
     if [[ -n ${UPDATE} ]]; then
@@ -84,7 +90,7 @@ if [[ -d ${CLONE_REPOSITORY_PATH} ]]; then
         popd
     fi
 else
-    git clone git://${GITHUB_URL}/${LINK} ${CLONE_REPOSITORY_PATH}
+    git clone ${LINK} ${CLONE_REPOSITORY_PATH}
     pushd ${CLONE_REPOSITORY_PATH}
     [[ -n ${IPV6} ]] && find ${CLONE_REPOSITORY_PATH}/.git -type f -name config -exec sed -i -e "s/github.com/${GITHUB_URL}/g" {} \;
     git submodule init
@@ -92,7 +98,7 @@ else
     popd
 fi
 
-[[ -n ${TEMPREPOSITORY} ]] && cp -r ${TEMPREPOSITORY} ${REPOSITORY}
+[[ -n ${TEMPREPOSITORY} ]] && cp -r ${CLONE_REPOSITORY_PATH} ${REPOSITORY}
 
 echo "[main]
   modulepath = ${MODULEPATH}
