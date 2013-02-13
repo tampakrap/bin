@@ -74,7 +74,7 @@ if [[ -n ${DELETE} ]]; then
         zypper rm -y puppet-server
     fi
     rm -rf /etc/puppet /var/lib/puppet
-    [ -f /etc/init.d/${PUPPETMASTER_INIT} ] && /etc/init.d/${PUPPETMASTER} stop
+    [ -f /etc/init.d/${PUPPETMASTER_INIT} ] && /etc/init.d/${PUPPETMASTER_INIT} stop
 fi
 
 if [[ -f /etc/gentoo-release ]]; then
