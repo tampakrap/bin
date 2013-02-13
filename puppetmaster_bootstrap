@@ -65,7 +65,7 @@ else
 fi
 
 if [[ -n ${DELETE} ]]; then
-    if [[ -f /etc/Gentoo-release ]]; then
+    if [[ -f /etc/gentoo-release ]]; then
         PUPPETMASTER_INIT="puppetmaster"
         rm -rf /etc/portage/package.{keywords,use} /var/cache/eix /etc/make.conf /etc/portage/make.conf
         emerge -C puppet net-tools && emerge --depclean
@@ -77,7 +77,7 @@ if [[ -n ${DELETE} ]]; then
     [ -f /etc/init.d/${PUPPETMASTER_INIT} ] && /etc/init.d/${PUPPETMASTER} stop
 fi
 
-if [[ -f /etc/Gentoo-release ]]; then
+if [[ -f /etc/gentoo-release ]]; then
     USE="old-output" emerge app-admin/puppet
 elif [[ -f /etc/SuSE-release ]]; then
     zypper in -y puppet-server
