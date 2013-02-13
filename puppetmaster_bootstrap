@@ -64,7 +64,7 @@ fi
 
 if [[ -n ${DELETE} ]]; then
     [ -f /etc/init.d/puppetmaster ] && /etc/init.d/puppetmaster stop
-    rm -rf /etc/puppet /var/lib/puppet /etc/portage/package.{keywords,use} /var/cache/eix
+    rm -rf /etc/puppet /var/lib/puppet /etc/portage/package.{keywords,use} /var/cache/eix /etc/make.conf /etc/portage/make.conf
     emerge -C puppet net-tools && emerge --depclean
 fi
 
