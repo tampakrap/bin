@@ -1,0 +1,96 @@
+#!/bin/bash
+
+DEFAULT_SITEPP="/etc/puppet/manifests/site.pp"
+DEFAULT_MODULEPATH="/etc/puppet/modules"
+GITHUB_URL="github.com"
+
+help() {
+    echo
+    echo "Bootstrapping puppetmaster script"
+    echo
+    echo "Options:"
+    echo "-s <path> Path of manifests/site.pp. Default is ${DEFAULT_SITEPP}."
+    echo "-m <path> Modulepath. Default is ${DEFAULT_MODULEPATH}. If they are more than one, use quotes and separate them with semicolons."
+    echo "-r <path> Path of the puppet repository."
+    echo "-l <url>  URL from github (namespace/repo_name)"
+    echo "-t        Optional clone of the puppet repository to /tmp, and then copy to final destination."
+    echo "-u        Update the repository."
+    echo "-d        Delete configs/packages before bootstrapping."
+    echo "-6        Master is IPv6 only."
+    echo
+    exit
+}
+
+if [[ $1 == "--help" ]]; then
+    help
+fi
+
+SITEPP=${DEFAULT_SITEPP}
+MODULEPATH=${DEFAULT_MODULEPATH}
+REPOSITORY=
+LINK=
+UPDATE=
+TEMPREPOSITORY=
+DELETE=
+IPV6=
+
+while getopts s:m:r:l:tud6h arg; do
+    case ${arg} in
+        s) SITEPP=${OPTARG} ;;
+        m) MODULEPATH=${OPTARG} ;;
+        r) REPOSITORY=${OPTARG} ;;
+        l) LINK=${OPTARG} ;;
+        t) TEMPREPOSITORY=1 ;;
+        u) UPDATE=1 ;;
+        d) DELETE=1 ;;
+        6) IPV6=1 ;;
+        h) help ;;
+        *) help ;;
+        ?) help ;;
+    esac
+done
+
+if [[ -z ${REPOSITORY} ]] || [[ -z ${LINK} ]]; then
+    help
+fi
+
+[[ -n ${IPV6} ]] && GITHUB_URL="github.iserv.nl"
+
+if [[ -z ${TEMPREPOSITORY} ]]; then
+    CLONE_REPOSITORY_PATH="/tmp/puppet"
+else
+    CLONE_REPOSITORY_PATH=${REPOSITORY}
+fi
+
+if [[ -n ${DELETE} ]]; then
+    [ -f /etc/init.d/puppetmaster ] && /etc/init.d/puppetmaster stop
+    rm -rf /etc/puppet /var/lib/puppet /etc/portage/package.{keywords,use} /var/cache/eix
+    emerge -C puppet net-tools && emerge --depclean
+fi
+
+USE="old-output" emerge app-admin/puppet
+
+if [[ -d ${CLONE_REPOSITORY_PATH} ]]; then
+    if [[ -n ${UPDATE} ]]; then
+        pushd ${CLONE_REPOSITORY_PATH}
+        git pull
+        popd
+    fi
+else
+    git clone git://${GITHUB_URL}/${LINK} ${CLONE_REPOSITORY_PATH}
+    pushd ${CLONE_REPOSITORY_PATH}
+    [[ -n ${IPV6} ]] && find ${CLONE_REPOSITORY_PATH}/.git -type f -name config -exec sed -i -e "s/github.com/${GITHUB_URL}/g" {} \;
+    git submodule init
+    git submodule update
+    popd
+fi
+
+[[ -n ${TEMPREPOSITORY} ]] && cp -r ${TEMPREPOSITORY} ${REPOSITORY}
+
+echo "[main]
+  modulepath = ${MODULEPATH}
+" > /etc/puppet/puppet.conf
+
+export RUBYLIB=$(find ${MODULEPATH} -type d -name lib -print0 | tr '\0' ':')
+
+puppet apply --debug --verbose ${SITEPP}
