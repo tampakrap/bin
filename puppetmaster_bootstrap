@@ -56,16 +56,23 @@ fi
 
 [[ -n ${IPV6} ]] && GITHUB_URL="github.iserv.nl"
 
-if [[ -z ${TEMPREPOSITORY} ]]; then
-    CLONE_REPOSITORY_PATH="/tmp/puppet"
+if [[ -n ${TEMPREPOSITORY} ]]; then
+    CLONE_REPOSITORY_PATH="/tmp/puppet_tmp"
 else
     CLONE_REPOSITORY_PATH=${REPOSITORY}
 fi
 
 if [[ -n ${DELETE} ]]; then
-    [ -f /etc/init.d/puppetmaster ] && /etc/init.d/puppetmaster stop
-    rm -rf /etc/puppet /var/lib/puppet /etc/portage/package.{keywords,use} /var/cache/eix /etc/make.conf /etc/portage/make.conf
-    emerge -C puppet net-tools && emerge --depclean
+    if [[ -f /etc/Gentoo-release ]]; then
+        PUPPETMASTER_INIT="puppetmaster"
+        rm -rf /etc/portage/package.{keywords,use} /var/cache/eix /etc/make.conf /etc/portage/make.conf
+        emerge -C puppet net-tools && emerge --depclean
+    elif [[ -f /etc/SuSE-release ]]; then
+        PUPPETMASTER_INIT="puppetmasterd"
+        zypper rm -y puppet-server
+    fi
+    rm -rf /etc/puppet /var/lib/puppet
+    [ -f /etc/init.d/${PUPPETMASTER_INIT} ] && /etc/init.d/${PUPPETMASTER} stop
 fi
 
 USE="old-output" emerge app-admin/puppet
