@@ -55,7 +55,7 @@ fi
 
 if [[ -n ${IPV6} ]] && [[ ${LINK} == *github.com* ]]; then
     GITHUB_IPV6="github.iserv.nl"
-    LINK=${LINK/github.com/GITHUB_IPV6}
+    LINK=${LINK/github.com/${GITHUB_IPV6}}
 fi
 
 if [[ -n ${TEMPREPOSITORY} ]]; then
