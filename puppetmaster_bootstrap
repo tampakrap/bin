@@ -16,6 +16,7 @@ help() {
     echo "-u        Update the repository."
     echo "-d        Delete configs/packages before bootstrapping."
     echo "-6        Master is IPv6 only."
+    echo "-a        (Gentoo only) Use app-admin/puppet ~arch and Ruby 1.9 (otherwise it will install stable app-admin/puppet and Ruby 1.8"
     echo
     exit 1
 }
@@ -32,8 +33,9 @@ UPDATE=
 TEMPREPOSITORY=
 DELETE=
 IPV6=
+UNSTABLE=
 
-while getopts s:m:r:l:tud6h arg; do
+while getopts s:m:r:l:tud6ah arg; do
     case ${arg} in
         s) SITEPP=${OPTARG} ;;
         m) MODULEPATH=${OPTARG} ;;
@@ -43,6 +45,7 @@ while getopts s:m:r:l:tud6h arg; do
         u) UPDATE=1 ;;
         d) DELETE=1 ;;
         6) IPV6=1 ;;
+        a) UNSTABLE=1 ;;
         h) help ;;
         *) help ;;
         ?) help ;;
@@ -79,7 +82,15 @@ if [[ -n ${DELETE} ]]; then
 fi
 
 if [[ -f /etc/gentoo-release ]]; then
-    USE="old-output" emerge app-admin/puppet
+    if [[ -n ${UNSTABLE} ]]; then
+        RUBY_TARGETS="ruby19"
+        echo "app-admin/puppet
+        dev-ruby/hiera" > /etc/portage/package.keywords
+    else
+        RUBY_TARGETS="ruby18"
+    fi
+    RUBY_TARGETS=${RUBY_TARGETS} USE="old-output" emerge app-admin/puppet
+    [[ -n ${UNSTABLE} ]] && rm /etc/portage/package.keywords
 elif [[ -f /etc/SuSE-release ]]; then
     zypper in -y puppet-server
 fi
