@@ -71,7 +71,7 @@ if [[ -n ${DELETE} ]]; then
     rm -rf /etc/puppet /var/lib/puppet
     if [[ -f /etc/gentoo-release ]]; then
         /etc/init.d/puppetmaster stop
-        rm -rf /etc/portage/package.{keywords,use,make.conf} /var/cache/eix /etc/make.conf
+        rm -rf /etc/portage/{make.conf,package.{keywords,use}} /var/cache/eix /etc/make.conf
         emerge -C puppet net-tools
         emerge --depclean
     elif [[ -f /etc/SuSE-release ]]; then
