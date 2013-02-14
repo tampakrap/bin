@@ -68,7 +68,8 @@ if [[ -n ${DELETE} ]]; then
     if [[ -f /etc/gentoo-release ]]; then
         PUPPETMASTER_INIT="puppetmaster"
         rm -rf /etc/portage/package.{keywords,use,make.conf} /var/cache/eix /etc/make.conf
-        emerge -C puppet net-tools && emerge --depclean
+        emerge -C puppet net-tools
+        emerge --depclean
     elif [[ -f /etc/SuSE-release ]]; then
         PUPPETMASTER_INIT="puppetmasterd"
         zypper rm -y puppet-server
