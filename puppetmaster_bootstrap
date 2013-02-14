@@ -75,7 +75,7 @@ if [[ -n ${DELETE} ]]; then
         emerge --depclean
     elif [[ -f /etc/SuSE-release ]]; then
         PUPPETMASTER_INIT="puppetmasterd"
-        zypper rm -y puppet-server
+        zypper rm -y puppet-server puppet
     fi
     rm -rf /etc/puppet /var/lib/puppet
     [ -f /etc/init.d/${PUPPETMASTER_INIT} ] && /etc/init.d/${PUPPETMASTER_INIT} stop
