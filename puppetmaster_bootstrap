@@ -9,7 +9,7 @@ help() {
     echo
     echo "Options:"
     echo "-s <path> Path of manifests/site.pp. Default is ${DEFAULT_SITEPP}."
-    echo "-m <path> Modulepath. Default is ${DEFAULT_MODULEPATH}. If they are more than one, use quotes and separate them with semicolons."
+    echo "-m <path> Modulepath. Default is ${DEFAULT_MODULEPATH}. If they are more than one, use quotes and separate them with ':'."
     echo "-r <path> Path of the puppet repository."
     echo "-l <url>  Git URL of the repository"
     echo "-t        Clone the puppet repository to /tmp, and then copy to final destination."
@@ -105,11 +105,6 @@ echo "[main]
   modulepath = ${MODULEPATH}
 " > /etc/puppet/puppet.conf
 
-RUBYLIB=
-for path in $(echo ${MODULEPATH} | tr ';' ' '); do
-    RUBYLIB+=$(find ${path} -type d -name lib -print0 | tr '\0' ':')
-done
-
-export RUBYLIB=${RUBYLIB}
+export RUBYLIB=$(find ${MODULEPATH/:/ /} -type d -name lib -print0 | tr '\0' ':')
 
 puppet apply --debug --verbose ${SITEPP}
