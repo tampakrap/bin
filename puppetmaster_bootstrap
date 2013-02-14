@@ -105,6 +105,6 @@ echo "[main]
   modulepath = ${MODULEPATH}
 " > /etc/puppet/puppet.conf
 
-export RUBYLIB=$(find ${MODULEPATH/:/ /} -type d -name lib -print0 | tr '\0' ':')
+export RUBYLIB=$(find $(echo ${MODULEPATH} | tr ':' ' ') -type d -name lib -print0 | tr '\0' ':')
 
 puppet apply --debug --verbose ${SITEPP}
