@@ -68,17 +68,16 @@ else
 fi
 
 if [[ -n ${DELETE} ]]; then
+    rm -rf /etc/puppet /var/lib/puppet
     if [[ -f /etc/gentoo-release ]]; then
-        PUPPETMASTER_INIT="puppetmaster"
+        /etc/init.d/puppetmaster stop
         rm -rf /etc/portage/package.{keywords,use,make.conf} /var/cache/eix /etc/make.conf
         emerge -C puppet net-tools
         emerge --depclean
     elif [[ -f /etc/SuSE-release ]]; then
-        PUPPETMASTER_INIT="puppetmasterd"
+        rcpuppetmasterd stop
         zypper rm -y puppet-server puppet
     fi
-    rm -rf /etc/puppet /var/lib/puppet
-    [ -f /etc/init.d/${PUPPETMASTER_INIT} ] && /etc/init.d/${PUPPETMASTER_INIT} stop
 fi
 
 if [[ -f /etc/gentoo-release ]]; then
