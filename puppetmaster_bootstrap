@@ -90,7 +90,7 @@ if [[ -f /etc/gentoo-release ]]; then
     fi
     [[ -n ${IPV6} ]] && GENTOO_MIRRORS="http://mirror.mcs.anl.gov/pub/gentoo/"
     GENTOO_MIRRORS=${GENTOO_MIRRORS} RUBY_TARGETS=${RUBY_TARGETS} \
-        USE="old-output minimal" emerge app-admin/puppet
+        USE="old-output minimal" emerge -q app-admin/puppet
     eselect ruby set ${RUBY_TARGETS}
     [[ -n ${UNSTABLE} ]] && rm /etc/portage/package.keywords
 elif [[ -f /etc/SuSE-release ]]; then
