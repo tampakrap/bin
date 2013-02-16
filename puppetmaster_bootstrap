@@ -15,8 +15,8 @@ help() {
     echo "-t        Clone the puppet repository to /tmp, and then copy to final destination."
     echo "-u        Update the repository."
     echo "-d        Delete configs/packages before bootstrapping."
-    echo "-6        Master is IPv6 only."
-    echo "-a        (Gentoo only) Use app-admin/puppet ~arch and Ruby 1.9 (otherwise it will install stable app-admin/puppet and Ruby 1.8"
+    echo "-6        Node is IPv6 only."
+    echo "-a        (Gentoo only) Use app-admin/puppet ~arch and Ruby 1.9 (otherwise it will install stable app-admin/puppet and Ruby 1.8)."
     echo
     exit 1
 }
@@ -88,7 +88,9 @@ if [[ -f /etc/gentoo-release ]]; then
     else
         RUBY_TARGETS="ruby18"
     fi
-    RUBY_TARGETS=${RUBY_TARGETS} USE="old-output -minimal" emerge app-admin/puppet
+    [[ -n ${IPV6} ]] && GENTOO_MIRRORS="http://mirror.mcs.anl.gov/pub/gentoo/"
+    GENTOO_MIRRORS=${GENTOO_MIRRORS} RUBY_TARGETS=${RUBY_TARGETS} \
+        USE="old-output minimal" emerge app-admin/puppet
     eselect ruby set ${RUBY_TARGETS}
     [[ -n ${UNSTABLE} ]] && rm /etc/portage/package.keywords
 elif [[ -f /etc/SuSE-release ]]; then
