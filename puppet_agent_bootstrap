@@ -1,0 +1,73 @@
+#!/bin/bash
+
+help() {
+    echo
+    echo "Bootstrapping puppet agent script"
+    echo
+    echo "Options:"
+    echo "-m <url>  The domain name or IP of the puppetmaster."
+    echo "-d        Delete configs/packages before bootstrapping."
+    echo "-6        Node is IPv6 only."
+    echo "-a        (Gentoo only) Use app-admin/puppet ~arch and Ruby 1.9 (otherwise it will install stable app-admin/puppet and Ruby 1.8)."
+    echo
+    exit 1
+}
+
+if [[ $1 == "--help" ]]; then
+    help
+fi
+
+PUPPETMASTER=
+DELETE=
+IPV6=
+UNSTABLE=
+
+while getopts m:d6ah arg; do
+    case ${arg} in
+        m) PUPPETMASTER=${OPTARG} ;;
+        d) DELETE=1 ;;
+        6) IPV6=1 ;;
+        a) UNSTABLE=1 ;;
+        h) help ;;
+        *) help ;;
+        ?) help ;;
+    esac
+done
+
+if [[ -z ${PUPPETMASTER} ]]; then
+    help
+fi
+
+if [[ -n ${DELETE} ]]; then
+    rm -rf /etc/puppet /var/lib/puppet
+    if [[ -f /etc/gentoo-release ]]; then
+        rm -rf /etc/portage/{make.conf,package.{keywords,use}} /var/cache/eix /etc/make.conf
+        emerge -C puppet net-tools
+        emerge --depclean
+    elif [[ -f /etc/SuSE-release ]]; then
+        zypper rm -y puppet
+    fi
+fi
+
+if [[ -f /etc/gentoo-release ]]; then
+    if [[ -n ${UNSTABLE} ]]; then
+        RUBY_TARGETS="ruby19"
+        echo "app-admin/puppet
+        dev-ruby/hiera" > /etc/portage/package.keywords
+    else
+        RUBY_TARGETS="ruby18"
+    fi
+    [[ -n ${IPV6} ]] && GENTOO_MIRRORS="http://mirror.mcs.anl.gov/pub/gentoo/"
+    GENTOO_MIRRORS=${GENTOO_MIRRORS} RUBY_TARGETS=${RUBY_TARGETS} \
+        USE="old-output minimal" emerge app-admin/puppet
+    eselect ruby set ${RUBY_TARGETS}
+    [[ -n ${UNSTABLE} ]] && rm /etc/portage/package.keywords
+elif [[ -f /etc/SuSE-release ]]; then
+    zypper in -y puppet
+fi
+
+echo "[main]
+  server = ${PUPPETMASTER}
+" > /etc/puppet/puppet.conf
+
+puppet agent --test --waitforcert 60
