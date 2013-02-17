@@ -72,8 +72,8 @@ if [[ -n ${DELETE} ]]; then
     if [[ -f /etc/gentoo-release ]]; then
         /etc/init.d/puppetmaster stop
         rm -rf /etc/portage/{make.conf,package.{keywords,use}} /var/cache/eix /etc/make.conf
-        emerge -C puppet net-tools
-        emerge --depclean
+        emerge -Cq puppet net-tools
+        emerge --depclean -q
     elif [[ -f /etc/SuSE-release ]]; then
         rcpuppetmasterd stop
         zypper rm -y puppet-server puppet

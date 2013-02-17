@@ -42,8 +42,8 @@ if [[ -n ${DELETE} ]]; then
     rm -rf /etc/puppet /var/lib/puppet
     if [[ -f /etc/gentoo-release ]]; then
         rm -rf /etc/portage/{make.conf,package.{keywords,use}} /var/cache/eix /etc/make.conf
-        emerge -C puppet net-tools
-        emerge --depclean
+        emerge -Cq puppet net-tools
+        emerge --depclean -q
     elif [[ -f /etc/SuSE-release ]]; then
         zypper rm -y puppet
     fi
