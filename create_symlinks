@@ -109,12 +109,12 @@ function _update_crons() {
 case $HOSTNAME in
     canibus)
         SBIN="cleanup create_symlinks emerge-tmpfs host-update update"
-        BIN="create_repolinks git packagelist random_password ssh wakeonlan"
+        BIN="create_repolinks git random_password wakeonlan"
         HOMEDIR=1
         ;;
     virtuoso)
         SBIN="cleanup create_symlinks emerge-tmpfs host-update update"
-        BIN="create_repolinks music-sync git packagelist random_password ssh wakeonlan"
+        BIN="create_repolinks music-sync git random_password wakeonlan"
         HOMEDIR=1
         WORK=1
         ;;
@@ -139,8 +139,8 @@ case $HOSTNAME in
         BIN="random_password wakeonlan"
         ;;
     xzibit)
-        SBIN="boxes_backup boxes_backup_cron cleanup create_symlinks emerge-tmpfs host-update keychain-clear update"
-        BIN="create_repolinks git packagelist random_password ssh wakeonlan"
+        SBIN="boxes_backup boxes_backup_cron cleanup create_symlinks emerge-tmpfs keychain-clear update"
+        BIN="create_repolinks git random_password wakeonlan"
         HOMEDIR=1
         WORK=1
         ;;
