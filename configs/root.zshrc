@@ -3,11 +3,16 @@ export CC=gcc
 export PAGER=/usr/bin/less
 export EDITOR=/usr/bin/vim
 
+export ECHANGELOG_USER="Theo Chatzimichos <tampakrap@gentoo.org>"
+eval `keychain --quiet --eval --agents ssh id_dsa`
+
 [ -f /etc/DIR_COLORS ] && eval $(dircolors -b /etc/DIR_COLORS)
 export ZLSCOLORS="${LS_COLORS}"
 
 alias ls="ls --color=auto -h"
 alias grep="grep --color=auto"
+alias isc='osc -A https://api.suse.de/'
+alias caff='caff -m yes'
 
 if type -p colorcvs &> /dev/null ; then alias cvs="colorcvs" ; fi
 if type -p colordiff &> /dev/null ; then alias diff="colordiff" ; fi
