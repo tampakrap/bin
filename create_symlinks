@@ -1,6 +1,5 @@
 #!/bin/bash
-# This script creates symlinks of the various personal scripts I keep in my github:tampakrap/scripts.git repository
-# TODO: clean bad symlinks
+# This script creates symlinks of the various personal scripts I keep in my github:tampakrap/bin.git repository
 
 . /etc/init.d/functions.sh
 
@@ -9,24 +8,18 @@ if [[ $(whoami) != "root" ]]; then
     exit 1
 fi
 
-USER="tampakrap"
+REPOSITORY="$( cd "$(dirname "${BASH_SOURCE[0]}")" && pwd )"
+source lib/create_symlinks_functions
 
 function _repository() {
-    if [[ -n ${HOMEDIR} ]]; then
-        REPOSITORY="/home/$USER/Source_Code/tampakrap/scripts"
-    else
-        REPOSITORY="/var/repos/scripts"
-        einfo "Updating repository"
-        pushd $REPOSITORY > /dev/null 2>&1
-        git pull | grep -q -v 'Already up-to-date.' && CHANGED=1
-        popd > /dev/null 2>&1
-        einfo "Done"
-        [[ -n $CHANGED ]] && einfo "Restarting the script" && $0 && exit
-    fi
+    einfo "Updating repository"
+    pushd ${REPOSITORY} > /dev/null 2>&1
+    git pull | grep -q -v 'Already up-to-date.' && CHANGED=1
+    popd > /dev/null 2>&1
+    einfo "Done"
+    [[ -n $CHANGED ]] && einfo "Restarting the script" && $0 && exit
 
-    [[ -n ${WORK} ]] && WORK_REPOSITORY="/home/$USER/Source_Code/suse/tchatzimichos/scripts"
-
-    source $REPOSITORY/create_symlinks_functions
+    [[ -n ${WORK} ]] && WORK_REPOSITORY="/home/$USER/Source_Code/suse/tchatzimichos/bin"
 }
 
 function _update_scripts() {
