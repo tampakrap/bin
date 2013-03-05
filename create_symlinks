@@ -19,7 +19,7 @@ function _repository() {
     einfo "Done"
     [[ -n $CHANGED ]] && einfo "Restarting the script" && $0 && exit
 
-    [[ -n ${WORK} ]] && WORK_REPOSITORY="/home/$USER/Source_Code/suse/tchatzimichos/bin"
+    [[ -n ${WORK} ]] && WORK_REPOSITORY="/home/tampakrap/Source_Code/suse/tchatzimichos/bin"
 }
 
 function _update_scripts() {
@@ -54,7 +54,7 @@ function _update_configs() {
         IGNORE=''
         case $FILE in
             user.*)
-                DESTINATION="/home/$USER"
+                DESTINATION="/home/tampakrap"
                 if [[ -n ${HOMEDIR} ]]; then
                     case $FILE in
                         user.ssh) TARGET=".ssh/config" ;;
@@ -70,13 +70,6 @@ function _update_configs() {
             root.*)
                 DESTINATION="/root"
                 TARGET=".${FILE#*.}"
-                ;;
-            etc.*)
-                DESTINATION="/etc"
-                case $FILE in
-                    etc.vimrc.local) TARGET="vim/${FILE#*.}" ;;
-                    *) TARGET="${FILE#*.}" ;;
-                esac
                 ;;
         esac
         [[ -n $IGNORE ]] || _install_file
