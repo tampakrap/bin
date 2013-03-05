@@ -17,6 +17,9 @@ if [[ $1 == "--help" ]]; then
     help
 fi
 
+DIR="$( cd "$(dirname "${BASH_SOURCE[0]}")" && pwd )"
+source "${DIR}/lib/operatingsystem"
+
 PUPPETMASTER=
 DELETE=
 IPV6=
@@ -40,31 +43,43 @@ fi
 
 if [[ -n ${DELETE} ]]; then
     rm -rf /etc/puppet /var/lib/puppet
-    if [[ -f /etc/gentoo-release ]]; then
-        rm -rf /etc/portage/{make.conf,package.{keywords,use}} /var/cache/eix /etc/make.conf
-        emerge -Cq puppet net-tools
-        emerge --depclean -q
-    elif [[ -f /etc/SuSE-release ]]; then
-        zypper rm -y puppet
-    fi
+    case ${OPERATINGSYSTEM} in
+        gentoo)
+            rm -rf /etc/portage/{make.conf,package.{keywords,use}} /var/cache/eix /etc/make.conf
+            emerge -Cq puppet net-tools
+            emerge --depclean -q
+            ;;
+        suse)
+            zypper rm -y puppet
+            ;;
+        debian)
+            apt-get install puppet
+            ;;
+    esac
 fi
 
-if [[ -f /etc/gentoo-release ]]; then
-    if [[ -n ${UNSTABLE} ]]; then
-        RUBY_TARGETS="ruby19"
-        echo "app-admin/puppet
-        dev-ruby/hiera" > /etc/portage/package.keywords
-    else
-        RUBY_TARGETS="ruby18"
-    fi
-    [[ -n ${IPV6} ]] && GENTOO_MIRRORS="http://mirror.mcs.anl.gov/pub/gentoo/"
-    GENTOO_MIRRORS=${GENTOO_MIRRORS} RUBY_TARGETS=${RUBY_TARGETS} \
-        USE="old-output minimal" emerge -q app-admin/puppet
-    eselect ruby set ${RUBY_TARGETS}
-    [[ -n ${UNSTABLE} ]] && rm /etc/portage/package.keywords
-elif [[ -f /etc/SuSE-release ]]; then
-    zypper in -y puppet
-fi
+case ${OPERATINGSYSTEM} in
+    gentoo)
+        if [[ -n ${UNSTABLE} ]]; then
+            RUBY_TARGETS="ruby19"
+            echo "app-admin/puppet
+            dev-ruby/hiera" > /etc/portage/package.keywords
+        else
+            RUBY_TARGETS="ruby18"
+        fi
+        [[ -n ${IPV6} ]] && GENTOO_MIRRORS="http://mirror.mcs.anl.gov/pub/gentoo/"
+        GENTOO_MIRRORS=${GENTOO_MIRRORS} RUBY_TARGETS=${RUBY_TARGETS} \
+            USE="old-output minimal" emerge -q app-admin/puppet
+        eselect ruby set ${RUBY_TARGETS}
+        [[ -n ${UNSTABLE} ]] && rm /etc/portage/package.keywords
+        ;;
+    suse)
+        zypper in -y puppet
+        ;;
+    debian)
+        apt-get install puppet
+        ;;
+esac
 
 echo "[main]
   server = ${PUPPETMASTER}
