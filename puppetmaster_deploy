@@ -5,7 +5,7 @@ DEFAULT_MODULEPATH="/etc/puppet/modules"
 
 help() {
     echo
-    echo "Bootstrapping puppetmaster script"
+    echo "Deploy puppetmaster"
     echo
     echo "Options:"
     echo "-s <path> Path of manifests/site.pp. Default is ${DEFAULT_SITEPP}."

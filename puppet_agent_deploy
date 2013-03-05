@@ -2,7 +2,7 @@
 
 help() {
     echo
-    echo "Bootstrapping puppet agent script"
+    echo "Deploy puppet agent"
     echo
     echo "Options:"
     echo "-m <url>  The domain name or IP of the puppetmaster."
