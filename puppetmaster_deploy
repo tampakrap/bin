@@ -89,7 +89,7 @@ if [[ -n ${DELETE} ]]; then
         debian)
             /etc/init.d/puppetmaster stop
             apt-get remove --auto-remove -y puppetmaster puppet
-            dpkg --purge puppetlabs-release
+            dpkg --purge -y puppetlabs-release
             ;;
     esac
 fi
@@ -115,9 +115,9 @@ case ${OPERATINGSYSTEM} in
     debian)
         if [[ -n ${PUPPETLABS} ]]; then
             wget http://apt.puppetlabs.com/puppetlabs-release-squeeze.deb -P /tmp
-            dpkg -i /tmp/puppetlabs-release-squeeze.deb
+            dpkg -i -y /tmp/puppetlabs-release-squeeze.deb
         fi
-        apt-get install puppet puppetmaster
+        apt-get install -y puppet puppetmaster
         ;;
 esac
 
