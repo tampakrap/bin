@@ -118,6 +118,8 @@ case ${OPERATINGSYSTEM} in
             dpkg -i /tmp/puppetlabs-release-squeeze.deb
         fi
         apt-get install -y puppet puppetmaster
+        /etc/init.d/puppetmaster stop
+        killall puppet
         ;;
 esac
 
