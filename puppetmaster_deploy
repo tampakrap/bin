@@ -17,6 +17,7 @@ help() {
     echo "-d        Delete configs/packages before bootstrapping."
     echo "-6        Node is IPv6 only."
     echo "-a        (Gentoo only) Use app-admin/puppet ~arch and Ruby 1.9 (otherwise it will install stable app-admin/puppet and Ruby 1.8)."
+    echo "-p        (Debian only) Use apt.puppetlabs.com"
     echo
     exit 1
 }
@@ -37,8 +38,9 @@ TEMPREPOSITORY=
 DELETE=
 IPV6=
 UNSTABLE=
+PUPPETLABS=
 
-while getopts s:m:r:l:tud6ah arg; do
+while getopts s:m:r:l:tud6aph arg; do
     case ${arg} in
         s) SITEPP=${OPTARG} ;;
         m) MODULEPATH=${OPTARG} ;;
@@ -49,6 +51,7 @@ while getopts s:m:r:l:tud6ah arg; do
         d) DELETE=1 ;;
         6) IPV6=1 ;;
         a) UNSTABLE=1 ;;
+        p) PUPPETLABS=1 ;;
         h) help ;;
         *) help ;;
         ?) help ;;
@@ -86,6 +89,7 @@ if [[ -n ${DELETE} ]]; then
         debian)
             /etc/init.d/puppetmaster stop
             apt-get remove --auto-remove -y puppetmaster puppet
+            dpkg --purge puppetlabs-release
             ;;
     esac
 fi
@@ -109,6 +113,10 @@ case ${OPERATINGSYSTEM} in
         zypper in -y puppet-server
         ;;
     debian)
+        if [[ -n ${PUPPETLABS} ]]; then
+            wget http://apt.puppetlabs.com/puppetlabs-release-squeeze.deb -P /tmp
+            dpkg -i /tmp/puppetlabs-release-squeeze.deb
+        fi
         apt-get install puppet puppetmaster
         ;;
 esac
