@@ -114,7 +114,8 @@ case ${OPERATINGSYSTEM} in
         ;;
     debian)
         if [[ -n ${PUPPETLABS} ]]; then
-            wget http://apt.puppetlabs.com/puppetlabs-release-squeeze.deb -P /tmp
+            [[ -f /tmp/puppetlabs-release-squeeze.deb ]] || \
+                wget http://apt.puppetlabs.com/puppetlabs-release-squeeze.deb -P /tmp
             dpkg -i /tmp/puppetlabs-release-squeeze.deb
         fi
         apt-get install -y puppet puppetmaster
