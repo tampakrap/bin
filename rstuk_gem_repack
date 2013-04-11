@@ -1,0 +1,10 @@
+#!/bin/bash
+
+cd /tmp
+rm -rf rstuk
+git clone git://github.com/openSUSE/rstuk
+cd rstuk
+gem build rstuk.gemspec
+cd /srv/www/htdocs
+mv /tmp/rstuk/rstuk-0.0.1.gem /srv/www/htdocs/gems
+gem generate_index
