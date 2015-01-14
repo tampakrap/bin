@@ -1,0 +1,42 @@
+#!/bin/sh
+
+help() {
+    echo
+    echo "Checks if a specific site/domain is available"
+    echo
+    echo "Options:"
+    echo "-d <domain> A domain to ping / curl to check if it is available. Default: google.com"
+    echo "-v          Verbose mode"
+    echo
+    exit 1
+}
+
+[ "$1" =  "--help" ] && help
+
+DOMAIN="google.com"
+VERBOSE=
+
+while getopts d:c:vh arg; do
+    case ${arg} in
+        d) DOMAIN=${OPTARG} ;;
+        v) VERBOSE=1 ;;
+        *|h) help ;;
+    esac
+done
+
+[ -z $DOMAIN ] && help
+
+if ping -c 4 "$DOMAIN" > /dev/null 2>&1; then
+    SUCCESS=1
+else
+    [ -n $VERBOSE ] && echo "Ping failed, trying again with curl in case pings are blocked"
+    curl -s "$DOMAIN" > /dev/null && SUCCESS=1
+fi
+
+if [ -n $SUCCESS ]; then
+    [ -n $VERBOSE ] && echo "Successfully reached domain $DOMAIN"
+    exit 0
+else
+    [ -n $VERBOSE ] && echo "Domain $DOMAIN is unreachable"
+    exit 1
+fi
