@@ -1,0 +1,9 @@
+#!/bin/sh
+
+if [ -n $GPG_TTY ]; then
+    DISPLAY2=$DISPLAY
+    DISPLAY=
+    /usr/bin/gpg2 "$@"
+    export DISPLAY=$DISPLAY2
+    unset DISPLAY2
+fi
