@@ -1,0 +1,24 @@
+#!/bin/sh
+
+if [ -z "$1" ]; then
+    print -P "usage: \e[1;36mextract\e[1;0m < filename >"
+    print -P "  Extract the file specified based on the extension"
+elif [ -f "$1" ]; then
+    case "${1}" in
+        *.tar) tar -xvpf $1 ;;
+        *.tar.bz2|*.tbz2) tar -xvjpf $1 ;;
+        *.tar.gz|*.tgz) tar -xvzpf $1 ;;
+        *.tar.xz) tar -xpJpf $1 ;;
+        *.bz2) bunzip2 $1 ;;
+        *.gz) gunzip $1 ;;
+        *.zip|*.jar) unzip $1 ;;
+        *.rar) unrar x $1 ;;
+        *.Z) uncompress $1 ;;
+        *.gem) gem unpack $1 ;;
+        *.rpm) unrpm $1 ;;
+        *.7z) 7z e $1 ;;
+        *) echo "Unable to extract '$1': Unknown extension"
+    esac
+else
+    echo "File ('$1') does not exist!"
+fi
