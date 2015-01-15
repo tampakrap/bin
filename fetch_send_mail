@@ -1,0 +1,94 @@
+#!/bin/zsh
+
+LOGFILE="${HOME}/.log/fetch_send_mail.log"
+CACHEDIR="${HOME}/.cache/fetch_send_mail"
+LOCKFILE="${CACHEDIR}/fetch_send_mail.lock"
+REACHDOMAIN="${HOME}/bin/reachdomain"
+ACCOUNTS=
+OIMAP_UI="quiet"
+VERBOSE=
+
+[[ -d $CACHEDIR ]] || mkdir -p $CACHEDIR
+
+help() {
+    echo
+    echo "Sends stored mail, performs onetime offlineimap run"
+    echo
+    echo "Options:"
+    echo "-a ACCOUNTS  Comma-separated list of IMAP accounts to sync"
+    echo "-v           Verbose mode"
+    echo
+    exit 1
+}
+
+[[ $1 == '--help' ]] && help
+
+while getopts a:vh arg; do
+    case ${arg} in
+        a) ACCOUNTS=("${(@s:,:)OPTARG}") ;;
+        v)
+            OIMAP_UI="basic"
+            VERBOSE="-v"
+            ;;
+        *|h) help ;;
+    esac
+done
+
+set -e
+
+
+msg() {
+    [[ -n $VERBOSE ]] && echo $1
+    if echo "$1" | grep -v 'INFO: ' > /dev/null; then
+        echo "$(date '+%Y-%m-%d %H:%M:%S %Y') $1" >> $LOGFILE
+    fi
+}
+
+
+run() {
+    if [[ -n $VERBOSE ]]; then
+        "$@"
+    else
+        "$@" > /dev/null
+    fi
+}
+
+
+if [[ -e "${LOCKFILE}" ]]; then
+    if pgrep imapfilter > /dev/null || pgrep offlineimap > /dev/null; then
+        msg "ERROR: Lock file already present, exiting."
+        exit 1
+    else
+        msg "WARNING: No stuck process found, removing lock file."
+        rm "${LOCKFILE}"
+    fi
+fi
+touch "${LOCKFILE}"
+trap "rm -f ${LOCKFILE}" EXIT
+
+for account in ${ACCOUNTS[@]}; do
+    case $account in
+        gmail) DOMAIN="imap.gmail.com" ;;
+        gentoo) DOMAIN="mail.gentoo.org" ;;
+        suse) DOMAIN="imap.suse.de" ;;
+        *)
+            msg "WARNING: Unknown account $account, removing from the list"
+            ACCOUNTS=("${(@)ACCOUNTS:#$account}")
+            continue
+            ;;
+    esac
+
+    if _msg=$($REACHDOMAIN -v -d $DOMAIN); then
+        msg "INFO: $_msg"
+    else
+        msg "ERROR: ${${(@f)_msg}[2]}"
+        ACCOUNTS=("${(@)ACCOUNTS:#$account}")
+        continue
+    fi
+
+    ~/bin/getmailpass.py $account > /dev/null
+
+    run imapfilter -c ~/.imapfilter/$account.lua -l $LOGFILE $VERBOSE
+done
+
+[[ -n $ACCOUNTS ]] && run offlineimap -o -u ${OIMAP_UI} -a ${(j:,:)ACCOUNTS} -l $LOGFILE
