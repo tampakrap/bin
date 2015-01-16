@@ -14,6 +14,9 @@ def get_passeval(account):
     elif account == 'suse':
         account = 'suse.de'
         service = 'sites'
+    elif account == 'novell':
+        account = 'novell.com'
+        service = 'sites'
     try:
         passfile_content = keyring.get_password(service, account).split('\n')[0]
         return passfile_content
