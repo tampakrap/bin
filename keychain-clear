@@ -1,0 +1,9 @@
+#!/bin/sh
+
+DAY=`date +%A`
+HOUR=`date +%H`
+
+case $DAY in
+    Saturday|Sunday) keychain -q --clear ;;
+    *) [ $HOUR == [9-19] ] && keychain -q --clear ;;
+esac
