@@ -1,13 +1,14 @@
 #!/bin/zsh
 
-LOGFILE="${HOME}/.log/fetch_send_mail.log"
+LOGDIR="${HOME}/.log"
+LOGFILE="${LOGDIR}/fetch_send_mail.log"
 CACHEDIR="${HOME}/.cache/fetch_send_mail"
 LOCKFILE="${CACHEDIR}/fetch_send_mail.lock"
-REACHDOMAIN="${HOME}/bin/reachdomain"
 ACCOUNTS=
 OIMAP_UI="quiet"
 VERBOSE=
 
+[[ -d $LOGDIR ]] || mkdir $LOGDIR
 [[ -d $CACHEDIR ]] || mkdir -p $CACHEDIR
 
 help() {
@@ -79,7 +80,7 @@ for account in ${ACCOUNTS[@]}; do
             ;;
     esac
 
-    if _msg=$($REACHDOMAIN -v -d $DOMAIN); then
+    if _msg=$(reachdomain -v -d $DOMAIN); then
         msg "INFO: $_msg"
     else
         msg "ERROR: ${${(@f)_msg}[2]}"
