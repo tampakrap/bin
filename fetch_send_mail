@@ -1,6 +1,7 @@
 #!/bin/zsh
 
-LOGFILE="${HOME}/.log/fetch_send_mail.log"
+LOGDIR="${HOME}/.log"
+LOGFILE="${LOGDIR}/fetch_send_mail.log"
 CACHEDIR="${HOME}/.cache/fetch_send_mail"
 LOCKFILE="${CACHEDIR}/fetch_send_mail.lock"
 REACHDOMAIN="${HOME}/bin/reachdomain"
@@ -8,6 +9,7 @@ ACCOUNTS=
 OIMAP_UI="quiet"
 VERBOSE=
 
+[[ -d $LOGDIR ]] || mkdir $LOGDIR
 [[ -d $CACHEDIR ]] || mkdir -p $CACHEDIR
 
 help() {
