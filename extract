@@ -1,9 +1,18 @@
 #!/bin/sh
 
-if [ -z "$1" ]; then
-    print -P "usage: \e[1;36mextract\e[1;0m < filename >"
-    print -P "  Extract the file specified based on the extension"
-elif [ -f "$1" ]; then
+help() {
+    echo
+    echo "Extracts the file specified based on the extension"
+    echo "Stolen from http://dev.gentoo.org/~steev/files/zshrc"
+    echo "Usage: extract <filename>"
+    echo
+    exit 1
+}
+
+[ -z "$1" ] && help
+[ "$1" == "--help" ] && help
+
+if [ -f "$1" ]; then
     case "${1}" in
         *.tar) tar -xvpf $1 ;;
         *.tar.bz2|*.tbz2) tar -xvjpf $1 ;;
@@ -20,5 +29,5 @@ elif [ -f "$1" ]; then
         *) echo "Unable to extract '$1': Unknown extension"
     esac
 else
-    echo "File ('$1') does not exist!"
+    echo "Unable to extract '$1': File not found"
 fi
