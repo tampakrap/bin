@@ -5,6 +5,6 @@ HOUR=`date +%H`
 COMMAND="keychain -q --clear"
 
 case $DAY in
-    Saturday|Sunday) "$COMMAND" ;;
-    *) if [ "$HOUR" -lt 9 ] || [ "$HOUR" -gt 19 ]; then "$COMMAND"; fi ;;
+    Saturday|Sunday) $COMMAND ;;
+    *) if [ "$HOUR" -lt 9 ] || [ "$HOUR" -gt 19 ]; then $COMMAND; fi ;;
 esac
