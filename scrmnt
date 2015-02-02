@@ -1,0 +1,60 @@
+#!/bin/zsh
+
+CRYPTSETUP="/usr/sbin/cryptsetup"
+ACTIONS=(open close)
+ACTION=
+DEVICES=(int ext flash)
+DEVICE="int"
+REMOVE=
+
+help() {
+    echo
+    echo "Mounts secret device. Needs to be ran as user."
+    echo
+    echo "Options:"
+    echo "-a <action>  'open' or 'close' the device."
+    echo "-d <device>  Select device: ext, flash, or internal if not specified."
+    echo "-t <target>  Set mount point. Default: /mnt/\$DEVICE"
+    echo "-r           Remove target after closing the device."
+    echo
+    exit 1
+}
+
+[[ -z $1 ]] && help
+[[ $1 == '--help' ]] && help
+[[ $(whoami) != 'tampakrap' ]] && help
+
+while getopts a:d:t:rh arg; do
+    case ${arg} in
+        a) ACTION=${OPTARG}
+            [[ ${ACTIONS[(r)${ACTION}]} != ${ACTION} ]] && help
+            ;;
+        d) DEVICE=${OPTARG}
+            [[ ${DEVICES[(r)${DEVICE}]} != ${DEVICE} ]] && help
+            ;;
+        m) TARGET=${OPTARG} ;;
+        r) REMOVE=1 ;;
+        *|h) help ;;
+    esac
+done
+
+case $DEVICE in
+    ext) BLOCK="/dev/vg_ext/usr" ;;
+    flash) BLOCK="/dev/sdb1" ;;
+    int) BLOCK="/dev/vg/usr" ;;
+esac
+
+[[ -n $TARGET ]] || TARGET="/mnt/prv${DEVICE}"
+
+case $ACTION in
+    open)
+        [[ -d $TARGET ]] || sudo mkdir $TARGET
+        echo -n $(pass tampakrap.gr/rakim/scrmnt) | sudo $CRYPTSETUP luksOpen $BLOCK prv$DEVICE -d -
+        sudo mount /dev/mapper/prv$DEVICE $TARGET
+        ;;
+    close)
+        sudo umount $TARGET
+        sudo $CRYPTSETUP luksClose /dev/mapper/prv$DEVICE
+        [[ -n $REMOVE ]] && sudo rmdir $TARGET
+        ;;
+esac
