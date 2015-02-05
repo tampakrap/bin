@@ -1,0 +1,22 @@
+#!/bin/sh
+
+TARGET="/var/tmp/chroot"
+chzypp="zypper -R ${TARGET}"
+chzyppin="${chzypp} -n --gpg-auto-import-keys in --no-recommends --download-in-advance"
+
+if [ ! -d ${TARGET} ]; then
+    mkdir -p ${TARGET}/{dev,proc}
+    ${chzypp} ar http://download.opensuse.org/tumbleweed/repo/oss repo-oss
+    ${chzyppin} filesystem
+    echo "root:x:0:0:root:/root:/bin/sh" > ${TARGET}/etc/passwd
+    cp /etc/resolv.conf ${TARGET}/etc
+    # environment for testing Puppet modules
+    mkdir ${TARGET}/root/puppet
+    mount --rbind /home/tampakrap/Repos/puppet/ ${TARGET}/root/puppet -o ro
+    ${chzyppin} ca-certificates ca-certificates-mozilla git ruby2.1-rubygem-bundler ruby-devel make gcc gcc-c++ libxml2-devel tar gzip patch
+fi
+
+
+mount --rbind /home/tampakrap/Repos/puppet/ ${TARGET}/root/puppet -o ro
+mount --rbind /dev ${TARGET}/dev -o ro
+mount -t proc none ${TARGET}/proc -o ro
