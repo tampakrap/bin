@@ -1,6 +1,6 @@
 #!/bin/sh
 
-if [ -n "$GPG_TTY" ]; then
+if [ "$GPG_TTY" != 'not a tty' ]; then
     DISPLAY2=$DISPLAY
     DISPLAY=
     /usr/bin/gpg2 "$@"
