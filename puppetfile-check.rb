@@ -4,7 +4,12 @@ require 'colored'
 require 'puppet_forge'
 require 'r10k/puppetfile'
 
-puppetfile_path = '/etc/puppet/environments/production'
+if ARGV[0]
+  puppetfile_path = ARGV[0]
+else
+  puppetfile_path = '/etc/puppet/environments/production'
+end
+
 puppetfile = R10K::Puppetfile.new(puppetfile_path).load
 user_agent = 'Tampakrap/0.1.0'
 
