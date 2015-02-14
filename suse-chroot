@@ -13,10 +13,11 @@ if [ ! -d ${TARGET} ]; then
     # environment for testing Puppet modules
     mkdir ${TARGET}/root/puppet
     mount --rbind /home/tampakrap/Repos/puppet/ ${TARGET}/root/puppet -o ro
-    ${chzyppin} ca-certificates ca-certificates-mozilla git ruby2.1-rubygem-bundler ruby-devel make gcc gcc-c++ libxml2-devel tar gzip patch
+    ${chzyppin} ca-certificates ca-certificates-mozilla git ruby-devel make gcc gcc-c++ libxml2-devel tar gzip patch
 fi
 
 
 mount --rbind /home/tampakrap/Repos/puppet/ ${TARGET}/root/puppet -o ro
 mount --rbind /dev ${TARGET}/dev -o ro
 mount -t proc none ${TARGET}/proc -o ro
+LC_ALL=C chroot ${TARGET} /bin/bash
