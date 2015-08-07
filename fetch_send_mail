@@ -57,7 +57,7 @@ run() {
 
 
 if [[ -e "${LOCKFILE}" ]]; then
-    if pgrep imapfilter > /dev/null || pgrep offlineimap > /dev/null; then
+    if pgrep ping > /dev/null || pgrep imapfilter > /dev/null || pgrep offlineimap > /dev/null; then
         msg "ERROR: Lock file already present, exiting."
         exit 1
     else
@@ -72,8 +72,7 @@ for account in ${ACCOUNTS[@]}; do
     case $account in
         gmail) DOMAIN="imap.gmail.com" ;;
         gentoo) DOMAIN="mail.gentoo.org" ;;
-        suse) DOMAIN="imap.suse.de" ;;
-        novell) DOMAIN="gwmail.emea.novell.com" ;;
+        suse) DOMAIN="mail.microfocus.com" ;;
         *)
             msg "WARNING: Unknown account $account, removing from the list"
             ACCOUNTS=("${(@)ACCOUNTS:#$account}")
