@@ -1,9 +1,10 @@
 #!/bin/sh
 
 cd /home/tampakrap/Repos/tampakrap/boxes/$HOSTNAME
+export LC_ALL=C
 zypper se -si > packages
 zypper se -sit package > packages_only
 zypper se -sit application > applications
 zypper se -sit pattern > patterns
 zypper lr -dp > repositories
-tail -n +6 packages_only | cut -d'|' -f 2 | tr -d ' ' | sort > packages_sorted
+tail -n +6 packages_only | cut -d'|' -f 2 | tr -d ' ' | sort -u > packages_sorted
