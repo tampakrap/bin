@@ -72,7 +72,7 @@ for account in ${ACCOUNTS[@]}; do
     case $account in
         gmail) DOMAIN="imap.gmail.com" ;;
         gentoo) DOMAIN="mail.gentoo.org" ;;
-        suse) DOMAIN="mail.microfocus.com" ;;
+        suse) DOMAIN="imap.suse.de" ;;
         *)
             msg "WARNING: Unknown account $account, removing from the list"
             ACCOUNTS=("${(@)ACCOUNTS:#$account}")
