@@ -1,0 +1,11 @@
+#!/bin/bash
+
+if ip link show tun0 > /dev/null 2>&1; then
+    ACT="down"
+else
+    ACT="up"
+    [ "$1" == "-s" ] && COMMAND="ssh xzibit.suse.cz"
+fi
+
+nmcli c $ACT SUSE && sleep 1
+$COMMAND
