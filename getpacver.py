@@ -41,7 +41,6 @@ LISTINDEX = {
     'ftp.debian.org': 'debian/pool/main/p/pmount',
     'get.bitlbee.org': 'src',
     'hartwork.org': 'public',
-    'libtorrent.rakshasa.no': 'downloads',
     'www.ibiblio.org': 'pub/linux/X11/screensavers',
     'home.tiscali.cz:8080': '~cz210552/distfiles',
     'people.redhat.com': '~rjones/virt-what/files/',
