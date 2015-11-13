@@ -169,24 +169,24 @@ class Package:
             version = json.loads(up_res.read())['version']
         elif self.service == 'downloads.sourceforge.net':
             up_res = urllib2.urlopen('https://%s/projects/%s/rss?limit=1' % ('.'.join(self.service.split('.')[1:]), self.upstream_name))
-            version = BeautifulSoup(up_res.read()).find('guid').contents[0]
+            version = BeautifulSoup(up_res.read(), 'html.parser').find('guid').contents[0]
         elif self.service == 'bitbucket.org':
             up_res = urllib2.urlopen('https://api.%s/1.0/repositories/%s/%s/tags' % (self.service, self.repo_owner, self.repo_name))
             version = sorted(json.loads(up_res.read()).keys(), reverse=True)[0]
         elif self.service.endswith('.googlecode.com'):
             up_res = urllib2.urlopen('https://code.google.com/feeds/p/%s/downloads/basic' % self.upstream_name)
-            version = BeautifulSoup(up_res.read()).find('entry').find('id').contents[0]
+            version = BeautifulSoup(up_res.read(), 'html.parser').find('entry').find('id').contents[0]
         elif self.service == 'gitorious.org':
             up_res = urllib2.urlopen('https://%s/%s/%s/activities.atom' % (self.service, self.repo_owner, self.repo_name))
-            items = BeautifulSoup(up_res.read()).find_all('content')
+            items = BeautifulSoup(up_res.read(), 'html.parser').find_all('content')
             for item in items:
                 item = item.contents[0]
                 if re.search('tagged', item):
                     break
-            version = BeautifulSoup(item).find('code').contents[0]
+            version = BeautifulSoup(item, 'html.parser').find('code').contents[0]
         elif self.service == 'git.zx2c4.com':
             up_res = urllib2.urlopen('http://%s/%s/log/' % (self.service, self.upstream_name))
-            version = BeautifulSoup(up_res.read()).find('a', 'tag-deco').contents[0]
+            version = BeautifulSoup(up_res.read(), 'html.parser').find('a', 'tag-deco').contents[0]
         elif self.service in LISTINDEX.keys():
             version = from_listindex()
         else:
@@ -202,7 +202,7 @@ class Package:
 def fetch_listindex(service, suburl):
     file_content = ''
     raw = urllib2.urlopen('http://%s/%s/' % (service, suburl)).read()
-    links = BeautifulSoup(raw).find_all('a')
+    links = BeautifulSoup(raw, 'html.parser').find_all('a')
     for link in links:
         content = link['href']
         if re.search("[a-z]+(-|_)[0-9\.]+(-alpha\.orig)?\.t(ar\.|gz)", content):
