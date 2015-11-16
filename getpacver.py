@@ -11,6 +11,7 @@ import osc.conf
 import osc.core
 import re
 import rpm
+import ssl
 import sys
 import urllib2
 
@@ -49,6 +50,7 @@ LISTINDEX = {
 SOCIAL_VCS = ['github.com', 'bitbucket.org']
 OBS_BASE_PATH = '/home/tampakrap/Repos/opensuse/obs'
 RESULT_TMPL = '{:^15} {separ} {:^37} {separ} {:^26} {separ} {:^15} {separ} {:^8}' + Fore.RESET
+CONTEXT = ssl._create_unverified_context()
 
 
 class PkgServiceNotFoundError(Exception):
@@ -193,7 +195,7 @@ class Package:
 
 def fetch_listindex(service, suburl):
     file_content = ''
-    raw = urllib2.urlopen('http://%s/%s/' % (service, suburl)).read()
+    raw = urllib2.urlopen('http://%s/%s/' % (service, suburl), context=CONTEXT).read()
     links = BeautifulSoup(raw, 'html.parser').find_all('a')
     for link in links:
         content = link['href']
