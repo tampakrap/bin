@@ -46,7 +46,7 @@ LISTINDEX = {
     'people.redhat.com': '~rjones/virt-what/files/',
 }
 
-SOCIAL_VCS = ['github.com', 'bitbucket.org', 'gitorious.org']
+SOCIAL_VCS = ['github.com', 'bitbucket.org']
 OBS_BASE_PATH = '/home/tampakrap/Repos/opensuse/obs'
 RESULT_TMPL = '{:^15} {separ} {:^37} {separ} {:^26} {separ} {:^15} {separ} {:^8}' + Fore.RESET
 
@@ -176,14 +176,6 @@ class Package:
         elif self.service.endswith('.googlecode.com'):
             up_res = urllib2.urlopen('https://code.google.com/feeds/p/%s/downloads/basic' % self.upstream_name)
             version = BeautifulSoup(up_res.read(), 'html.parser').find('entry').find('id').contents[0]
-        elif self.service == 'gitorious.org':
-            up_res = urllib2.urlopen('https://%s/%s/%s/activities.atom' % (self.service, self.repo_owner, self.repo_name))
-            items = BeautifulSoup(up_res.read(), 'html.parser').find_all('content')
-            for item in items:
-                item = item.contents[0]
-                if re.search('tagged', item):
-                    break
-            version = BeautifulSoup(item, 'html.parser').find('code').contents[0]
         elif self.service == 'git.zx2c4.com':
             up_res = urllib2.urlopen('http://%s/%s/log/' % (self.service, self.upstream_name))
             version = BeautifulSoup(up_res.read(), 'html.parser').find('a', 'tag-deco').contents[0]
