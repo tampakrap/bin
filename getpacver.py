@@ -220,6 +220,7 @@ def print_pkg_status_line(status, pkg_dir, service, version, old, color):
     separator = Fore.RESET + '|' + color
     print(color + RESULT_TMPL.format(status, pkg_dir, service, version, old, separ=separator))
 
+
 def pkg_check(PRJ_DIR_PATH, prj, pkg_dir):
     PKG_DIR_PATH = '%s/%s' % (PRJ_DIR_PATH, pkg_dir)
     osc_co_or_up(PRJ_DIR_PATH, PKG_DIR_PATH, prj, pkg_dir)
@@ -255,7 +256,7 @@ if args.listindex:
 osc.conf.get_config()
 
 print(RESULT_TMPL.format('STATUS', 'PACKAGE NAME', 'SERVICE', 'VERSION', 'OLD', separ='|'))
-print(RESULT_TMPL.format('', '', '', '', '', separ='+').replace(' ','-'))
+print(RESULT_TMPL.format('', '', '', '', '', separ='+').replace(' ', '-'))
 
 if args.package:
     for prj, pkg_dirs in projects_packages.iteritems():
