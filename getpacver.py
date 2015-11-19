@@ -146,7 +146,14 @@ class Package:
             up_res = urllib2.urlopen('https://api.%s/repos/%s/%s/tags' % (self.service, self.repo_owner, self.repo_name))
             version = json.loads(up_res.read())[0]['name']
         elif self.service == 'pypi.python.org':
-            up_res = urllib2.urlopen('https://%s/pypi/%s/json' % (self.service, self.upstream_name))
+            try:
+                up_res = urllib2.urlopen('https://%s/pypi/%s/json' % (self.service, self.upstream_name))
+            except urllib2.HTTPError:
+                if self.rpmspec_name == 'python-salt-testing':
+                    self.upstream_name = 'SaltTesting'
+                    up_res = urllib2.urlopen('https://%s/pypi/%s/json' % (self.service, self.upstream_name))
+                else:
+                    raise
             version = json.loads(up_res.read())['info']['version']
         elif self.service == 'rubygems.org':
             up_res = urllib2.urlopen('https://%s/api/v1/gems/%s.json' % (self.service, self.upstream_name))
