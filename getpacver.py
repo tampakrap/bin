@@ -120,7 +120,7 @@ class Package:
             except IndexError:
                 pass
 
-            version = version.replace('-src', '').replace('.tgz', '').replace('.orig', '').replace('-', '_')
+            version = version.replace('-src', '').replace('.tgz', '').replace('.orig', '').replace('-', '')
             if version.startswith('v'):
                 version = version[1:]
 
