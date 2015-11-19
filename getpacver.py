@@ -31,7 +31,7 @@ LISTINDEX = {
 
 SOCIAL_VCS = ['github.com', 'bitbucket.org']
 OBS_BASE_PATH = '/home/tampakrap/Repos/opensuse/obs'
-RESULT_TMPL = '{:^15} {separ} {:^37} {separ} {:^26} {separ} {:^15} {separ} {:^8}' + Fore.RESET
+RESULT_TMPL = '{:^15} {separ} {:^32} {separ} {:^37} {separ} {:^26} {separ} {:^15} {separ} {:^8}' + Fore.RESET
 CONTEXT = ssl._create_unverified_context()
 
 
@@ -207,7 +207,7 @@ def osc_co_or_up(PRJ_DIR_PATH, PKG_DIR_PATH, prj, pkg_dir):
 
 def print_pkg_status_line(status, pkg_dir, service, version, old, color):
     separator = Fore.RESET + '|' + color
-    print(color + RESULT_TMPL.format(status, pkg_dir, service, version, old, separ=separator))
+    print(color + RESULT_TMPL.format(status, prj, pkg_dir, service, version, old, separ=separator))
 
 
 def pkg_check(PRJ_DIR_PATH, prj, pkg_dir):
@@ -244,8 +244,8 @@ if args.listindex:
 
 osc.conf.get_config()
 
-print(RESULT_TMPL.format('STATUS', 'PACKAGE NAME', 'SERVICE', 'VERSION', 'OLD', separ='|'))
-print(RESULT_TMPL.format('', '', '', '', '', separ='+').replace(' ', '-'))
+print(RESULT_TMPL.format('STATUS', 'PROJECT', 'PACKAGE NAME', 'SERVICE', 'VERSION', 'OLD', separ='|'))
+print(RESULT_TMPL.format('', '', '', '', '', '', separ='+').replace(' ', '-'))
 
 if args.package:
     for prj, pkg_dirs in projects_packages.iteritems():
