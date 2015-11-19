@@ -15,26 +15,8 @@ import ssl
 import sys
 import urllib2
 
-projects_packages = {
-    'benchmark': ['forkbomb'],
-    'devel:languages:python': ['python-django-auth-ldap', 'python-django-international', 'python-mockldap'],
-    'devel:languages:ruby:extensions': ['rubygem-colored', 'rubygem-cri', 'rubygem-deep_merge', 'rubygem-faraday', 'rubygem-faraday_middleware',
-                                        'rubygem-faraday_middleware-multi_json', 'rubygem-hub', 'rubygem-json_pure', 'rubygem-log4r',
-                                        'rubygem-multi_json', 'rubygem-ruby-augeas', 'rubygem-systemu'],
-    'devel:libraries:c_c++': ['augeas'],
-    'devel:tools:building': ['colorgcc', 'colormake'],
-    'devel:tools:scm:svn': ['python-svneverever', 'svn2git'],
-    'home:sleep_walker:gentoo': ['eix', 'gentoolkit-dev', 'gentoo-syntax', 'gentoo-zsh-completions', 'portage-utils', 'python-gentoolkit',
-                                 'python-portage', 'python-snakeoil', 'sandbox'],
-    'network:utilities': ['libtorrent', 'nmcli-dmenu', 'rtorrent'],
-    'security:privacy': ['password-store', 'python-pass_python_keyring'],
-    'server:irc': ['bitlbee'],
-    'utilities': ['pmount', 'uam'],
-    'systemsmanagement:puppet': ['mcollective', 'puppet-dashboard', 'puppetdb', 'python-puppetboard', 'python-pypuppetdb', 'rubygem-augeas',
-                                 'rubygem-facter', 'rubygem-hiera', 'rubygem-puppet', 'rubygem-puppet-lint', 'rubygem-r10k'],
-    'Virtualization': ['virt-what'],
-    'X11:Utilities': ['urxvt-font-size', 'urxvt-perls', 'urxvt-tabbedex', 'xautolock', 'xxkb'],
-}
+with open('/home/tampakrap/.config/getpacver.json') as f:
+    projects_packages = json.loads(f.read())
 
 LISTINDEX = {
     'distfiles.gentoo.org': 'distfiles',
@@ -213,7 +195,7 @@ def osc_co_or_up(PRJ_DIR_PATH, PKG_DIR_PATH, prj, pkg_dir):
                 osc_pkg.update()
     except osc.oscerr.NoWorkingCopy:
         with silence():
-            osc.core.checkout_package('https://api.opensuse.org', prj, pkg_dir, prj_dir=PRJ_DIR_PATH)
+            osc.core.checkout_package('https://api.opensuse.org', str(prj), str(pkg_dir), prj_dir=PRJ_DIR_PATH)
 
 
 def print_pkg_status_line(status, pkg_dir, service, version, old, color):
