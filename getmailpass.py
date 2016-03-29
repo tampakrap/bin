@@ -8,7 +8,7 @@ import sys
 def get_passeval(account):
     if account == 'gmail':
         account = 'google'
-        service = 'tampakrap.gr/%s/mutt' % socket.gethostname()
+        service = 'forkbomb.gr/%s/mutt' % socket.gethostname()
     elif account == 'gentoo':
         service = 'various'
     elif account == 'suse':
