@@ -1,0 +1,20 @@
+#!/bin/bash
+
+PUPPET_DIR="/home/tampakrap/Repos/puppet/forkbomb.gr-puppet"
+MCO_PLUGINS_DIR="${PUPPET_DIR}/modules/dist/profile/files/usr/lib/mcollective/plugins"
+MCO_CLIENT_PLUGINS_DIR="/home/tampakrap/.mcollective.d/plugins/mcollective"
+
+[[ -d $MCO_CLIENT_PLUGINS_DIR ]] && mkdir -p $MCO_CLIENT_PLUGINS_DIR
+
+pushd $MCO_PLUGINS_DIR > /dev/null
+for plugin_type in agent aggregate application data util validator; do
+    [[ -d "${MCO_CLIENT_PLUGINS_DIR}/${plugin_type}" ]] || mkdir "${MCO_CLIENT_PLUGINS_DIR}/${plugin_type}"
+    for plugin_dir in $(find . -type d -name $plugin_type); do
+        PLUGIN_PATH="${PWD}${plugin_dir##*.}"
+        for plugin in $(ls $PLUGIN_PATH); do
+            [[ -L "${MCO_CLIENT_PLUGINS_DIR}/${plugin_type}/${plugin}" ]] || \
+              ln -s "${PLUGIN_PATH}/$plugin" "${MCO_CLIENT_PLUGINS_DIR}/${plugin_type}"
+        done
+    done
+done
+popd > /dev/null
