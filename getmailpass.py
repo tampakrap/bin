@@ -6,17 +6,19 @@ import sys
 
 
 def get_passeval(account):
+    service = 'sites'
+
     if account == 'gmail':
         account = 'google'
         service = 'forkbomb.gr/%s/mutt' % socket.gethostname()
+    elif account == 'seznam':
+        account += '.cz'
+    elif account == 'suse':
+        account += '.de'
+    elif account == 'novell':
+        account += '.com'
     elif account == 'gentoo':
         service = 'various'
-    elif account == 'suse':
-        account = 'suse.de'
-        service = 'sites'
-    elif account == 'novell':
-        account = 'novell.com'
-        service = 'sites'
     try:
         passfile_content = keyring.get_password(service, account).split('\n')[0]
         return passfile_content

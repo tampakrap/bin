@@ -71,8 +71,9 @@ trap "rm -f ${LOCKFILE}" EXIT
 for account in ${ACCOUNTS[@]}; do
     case $account in
         gmail) DOMAIN="imap.gmail.com" ;;
-        gentoo) DOMAIN="mail.gentoo.org" ;;
+        seznam) DOMAIN="imap.seznam.cz" ;;
         suse) DOMAIN="imap.suse.de" ;;
+        gentoo) DOMAIN="mail.gentoo.org" ;;
         *)
             msg "WARNING: Unknown account $account, removing from the list"
             ACCOUNTS=("${(@)ACCOUNTS:#$account}")
