@@ -2,9 +2,11 @@
 
 DAY=`date +%A`
 HOUR=`date +%H`
-COMMAND="keychain -q --clear"
 
 case $DAY in
     Saturday|Sunday) $COMMAND ;;
-    *) if [ "$HOUR" -lt 9 ] || [ "$HOUR" -gt 19 ]; then $COMMAND; fi ;;
+    *) if [ "$HOUR" -lt 9 ] || [ "$HOUR" -gt 19 ]; then
+           keychain -q --clear
+           echo RELOADAGENT | gpg-connect-agent > /dev/null
+       fi ;;
 esac
