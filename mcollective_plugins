@@ -1,7 +1,7 @@
 #!/bin/bash
 
 PUPPET_DIR="/home/tampakrap/Repos/puppet/forkbomb.gr-puppet"
-MCO_PLUGINS_DIR="${PUPPET_DIR}/modules/dist/profile/files/usr/lib/mcollective/plugins"
+MCO_PLUGINS_DIR="${PUPPET_DIR}/modules/dist/profile/files/usr/local/lib/mcollective"
 MCO_CLIENT_PLUGINS_DIR="/home/tampakrap/.mcollective.d/plugins/mcollective"
 
 [[ -d $MCO_CLIENT_PLUGINS_DIR ]] || mkdir -p $MCO_CLIENT_PLUGINS_DIR
