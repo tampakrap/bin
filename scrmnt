@@ -17,20 +17,19 @@ help() {
     echo "-t <target>  Set mount point. Default: /mnt/\$DEVICE"
     echo "-r           Remove target after closing the device."
     echo
-    exit 1
 }
 
-[[ -z $1 ]] && help
+[[ -z $1 ]] && help && exit 1
 [[ $1 == '--help' ]] && help
-[[ $(whoami) != 'tampakrap' ]] && help
+[[ $(whoami) != 'tampakrap' ]] && help && exit 1
 
 while getopts a:d:t:rh arg; do
     case ${arg} in
         a) ACTION=${OPTARG}
-            [[ ${ACTIONS[(r)${ACTION}]} != ${ACTION} ]] && help
+            [[ ${ACTIONS[(r)${ACTION}]} != ${ACTION} ]] && help && exit 1
             ;;
         d) DEVICE=${OPTARG}
-            [[ ${DEVICES[(r)${DEVICE}]} != ${DEVICE} ]] && help
+            [[ ${DEVICES[(r)${DEVICE}]} != ${DEVICE} ]] && help && exit 1
             ;;
         m) TARGET=${OPTARG} ;;
         r) REMOVE=1 ;;
@@ -49,7 +48,7 @@ esac
 case $ACTION in
     open)
         [[ -d $TARGET ]] || sudo mkdir $TARGET
-        echo -n $(pass tampakrap.gr/rakim/scrmnt) | sudo $CRYPTSETUP luksOpen $BLOCK prv$DEVICE -d -
+        echo -n $(pass forkbomb.gr/$HOSTNAME/scrmnt/$DEVICE) | sudo $CRYPTSETUP luksOpen $BLOCK prv$DEVICE -d -
         sudo mount /dev/mapper/prv$DEVICE $TARGET
         ;;
     close)
