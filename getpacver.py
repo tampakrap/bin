@@ -11,6 +11,7 @@ import osc.conf
 import osc.core
 import re
 import rpm
+import semantic_version
 import ssl
 import sys
 import urllib2
@@ -29,7 +30,7 @@ LISTINDEX = {
     'people.redhat.com': '~rjones/virt-what/files/',
 }
 
-SOCIAL_VCS = ['github.com', 'bitbucket.org']
+SOCIAL_VCS = ['github.com', 'bitbucket.org', 'gitlab.com']
 OBS_BASE_PATH = '/home/tampakrap/Repos/opensuse/obs'
 RESULT_TMPL = '{:^15} {separ} {:^32} {separ} {:^37} {separ} {:^26} {separ} {:^15} {separ} {:^8}' + Fore.RESET
 CONTEXT = ssl._create_unverified_context()
@@ -142,9 +143,24 @@ class Package:
                         versions.append(clean_version(line))
             return get_max_version(versions)
 
+        def get_github_gitlab_max_version(full_api):
+            all_tags = []
+            for part_api in full_api:
+                try:
+                    all_tags.append(semantic_version.Version(part_api['name'].strip('v')))
+                except ValueError:
+                    pass
+            return str(sorted(all_tags)[-1])
+
+
         if self.service == 'github.com':
             up_res = urllib2.urlopen('https://api.%s/repos/%s/%s/tags' % (self.service, self.repo_owner, self.repo_name))
-            version = json.loads(up_res.read())[0]['name']
+            version = get_github_gitlab_max_version(json.loads(up_res.read()))
+        elif self.service =='gitlab.com':
+            req = urllib2.Request('https://%s/api/v3/projects/%s%%2F%s/repository/tags' % (self.service, self.repo_owner, self.repo_name))
+            req.add_header('PRIVATE-TOKEN', 'cyw6ZEpBpzTJH1e8Jfwq')
+            up_res = urllib2.urlopen(req)
+            version = get_github_gitlab_max_version(json.loads(up_res.read()))
         elif self.service == 'pypi.python.org':
             try:
                 up_res = urllib2.urlopen('https://%s/pypi/%s/json' % (self.service, self.upstream_name))
@@ -163,7 +179,7 @@ class Package:
             version = BeautifulSoup(up_res.read(), 'html.parser').find('guid').contents[0]
         elif self.service == 'bitbucket.org':
             up_res = urllib2.urlopen('https://api.%s/1.0/repositories/%s/%s/tags' % (self.service, self.repo_owner, self.repo_name))
-            version = sorted(json.loads(up_res.read()).keys(), reverse=True)[0]
+            version = sorted(json.loads(up_res.read()).keys())[-1]
         elif self.service.endswith('.googlecode.com'):
             up_res = urllib2.urlopen('https://code.google.com/feeds/p/%s/downloads/basic' % self.upstream_name)
             version = BeautifulSoup(up_res.read(), 'html.parser').find('entry').find('id').contents[0]
@@ -196,13 +212,14 @@ def fetch_listindex(service, suburl):
 
 def osc_co_or_up(PRJ_DIR_PATH, PKG_DIR_PATH, prj, pkg_dir):
     try:
-        osc_pkg = osc.core.Package(PKG_DIR_PATH)
         if not args.no_osc_up:
+            osc_pkg = osc.core.Package(PKG_DIR_PATH)
+            rev = osc_pkg.latest_rev(expand=True)
             with silence():
-                osc_pkg.update()
+                osc_pkg.update(rev)
     except osc.oscerr.NoWorkingCopy:
         with silence():
-            osc.core.checkout_package('https://api.opensuse.org', str(prj), str(pkg_dir), prj_dir=PRJ_DIR_PATH)
+            osc.core.checkout_package('https://api.opensuse.org', str(prj), str(pkg_dir), prj_dir=PRJ_DIR_PATH, expand_link=True)
 
 
 def print_pkg_status_line(status, pkg_dir, service, version, old, color):
@@ -257,4 +274,7 @@ else:
     for prj, pkg_dirs in projects_packages.iteritems():
         PRJ_DIR_PATH = '%s/%s' % (OBS_BASE_PATH, prj)
         for pkg_dir in pkg_dirs:
-            pkg_check(PRJ_DIR_PATH, prj, pkg_dir)
+            try:
+                pkg_check(PRJ_DIR_PATH, prj, pkg_dir)
+            except Exception,e:
+                print "%s failed %s" % (pkg_dir, e)
