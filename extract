@@ -18,7 +18,7 @@ if [ -f "$1" ]; then
         *.tar) tar -xvpf "$1" ;;
         *.tar.bz2|*.tbz2) tar -xvjpf "$1" ;;
         *.tar.gz|*.tgz) tar -xvzpf "$1" ;;
-        *.tar.xz) tar -xpJpf "$1" ;;
+        *.tar.xz) tar -xvJpf "$1" ;;
         *.bz2) bunzip2 "$1" ;;
         *.gz) gunzip "$1" ;;
         *.zip|*.jar) unzip "$1" ;;
