@@ -18,8 +18,8 @@ while getopts l:sh arg; do
     esac
 done
 
-if nmcli c show --active | grep -q SUSE; then
-    LOCATION=$(nmcli -f NAME c show --active | grep SUSE | cut -d'-' -f2)
+if nmcli c show --active | grep -v openSUSE | grep -q SUSE; then
+    LOCATION=$(nmcli -f NAME c show --active | grep -v openSUSE | grep SUSE | cut -d'-' -f2)
     ACT="down"
 else
     ACT="up"
