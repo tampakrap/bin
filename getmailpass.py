@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/python3
 
 import keyring
 import socket
@@ -28,6 +28,6 @@ def get_passeval(account):
 if __name__ == "__main__":
     try:
         print(get_passeval(sys.argv[1]))
-    except Exception, e:
+    except Exception as e:
         sys.stderr.write(str(e))
         sys.exit(1)
