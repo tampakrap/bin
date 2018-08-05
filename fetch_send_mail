@@ -57,7 +57,7 @@ run() {
 
 
 if [[ -e "${LOCKFILE}" ]]; then
-    if pgrep ping > /dev/null || pgrep imapfilter > /dev/null || pgrep offlineimap > /dev/null; then
+    if pgrep "(reachdomain|imapfilter|offlineimap)" > /dev/null; then
         msg "ERROR: Lock file already present, exiting."
         exit 1
     else
