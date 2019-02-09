@@ -62,7 +62,7 @@ if [[ -e "${LOCKFILE}" ]]; then
         exit 1
     else
         msg "WARNING: No stuck process found, removing lock file."
-        rm "${LOCKFILE}"
+        rm -f "${LOCKFILE}"
     fi
 fi
 touch "${LOCKFILE}"
@@ -91,7 +91,7 @@ for account in ${ACCOUNTS[@]}; do
 
     ~/bin/getmailpass.py $account > /dev/null
 
-    run imapfilter -c ~/.imapfilter/$account.lua -l $LOGFILE $VERBOSE
+    #run imapfilter -c ~/.imapfilter/$account.lua -l $LOGFILE $VERBOSE
 done
 
 [[ -n $ACCOUNTS ]] && run offlineimap -o -u ${OIMAP_UI} -a ${(j:,:)ACCOUNTS} -l $LOGFILE
