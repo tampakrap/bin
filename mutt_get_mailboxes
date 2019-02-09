@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# Prints the mailboxes in a mutt friendly format, so that they are properly
+# displayed at the sidebar
+
+for dir in $(ls ~/.Mail); do
+    VAR+="+===\ $dir\ === "
+    FILTERS=$(ls ~/.Mail/$dir | sed -e 's/ /##/' | LC_ALL=C sort)
+    for filter in $FILTERS; do
+        VAR+="=$dir/${filter/\#\#/\ } "
+    done
+done
+
+echo $VAR
