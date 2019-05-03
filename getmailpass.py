@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 
 import keyring
 import socket
@@ -6,11 +6,12 @@ import sys
 
 
 def get_passeval(account):
+    hostname = socket.gethostname().split('.')[0]
     service = 'sites'
 
     if account == 'gmail':
         account = 'google'
-        service = 'forkbomb.gr/%s/mutt' % socket.gethostname()
+        service = 'forkbomb.gr/{}/mutt'.format(hostname)
     elif account == 'seznam':
         account += '.cz'
     elif account == 'suse':
