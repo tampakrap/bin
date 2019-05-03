@@ -1,9 +1,0 @@
-#!/bin/bash
-
-case $HOSTNAME in
-    xzibit)
-        for box in raekwon; do
-            /usr/local/sbin/boxes_backup $box 2
-        done
-        ;;
-esac

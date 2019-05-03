@@ -14,12 +14,6 @@ def get_passeval(account):
         service = 'forkbomb.gr/{}/mutt'.format(hostname)
     elif account == 'seznam':
         account += '.cz'
-    elif account == 'suse':
-        account += '.de'
-    elif account == 'novell':
-        account += '.com'
-    elif account == 'gentoo':
-        service = 'various'
     try:
         passfile_content = keyring.get_password(service, account).split('\n')[0]
         return passfile_content
