@@ -8,35 +8,34 @@ help() {
     echo "-d <domain> A domain to ping / curl to check if it is available. Default: google.com"
     echo "-v          Verbose mode"
     echo
-    exit 1
 }
 
-[ "$1" =  "--help" ] && help
+[ "$1" =  "--help" ] && help && exit
 
 DOMAIN="google.com"
-VERBOSE=
 
 while getopts d:c:vh arg; do
     case ${arg} in
         d) DOMAIN=${OPTARG} ;;
         v) VERBOSE=1 ;;
-        *|h) help ;;
+        h) help && exit ;;
+        *) help && exit 1 ;;
     esac
 done
 
-[ -z $DOMAIN ] && help
+[ -z "$DOMAIN" ] && help && exit 1
 
 if ping -c 4 "$DOMAIN" > /dev/null 2>&1; then
     SUCCESS=1
 else
-    [ -n $VERBOSE ] && echo "Ping failed, trying again with curl in case pings are blocked"
+    [ -n "$VERBOSE" ] && echo "Ping failed, trying again with curl in case pings are blocked"
     curl -s "$DOMAIN" > /dev/null && SUCCESS=1
 fi
 
-if [ -n $SUCCESS ]; then
-    [ -n $VERBOSE ] && echo "Successfully reached domain $DOMAIN"
+if [ -n "$SUCCESS" ]; then
+    [ -n "$VERBOSE" ] && echo "Successfully reached domain $DOMAIN"
     exit 0
 else
-    [ -n $VERBOSE ] && echo "Domain $DOMAIN is unreachable"
+    [ -n "$VERBOSE" ] && echo "Domain $DOMAIN is unreachable"
     exit 1
 fi
