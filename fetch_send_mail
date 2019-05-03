@@ -4,7 +4,6 @@ LOGDIR="${HOME}/.log"
 LOGFILE="${LOGDIR}/fetch_send_mail.log"
 CACHEDIR="${HOME}/.cache/fetch_send_mail"
 LOCKFILE="${CACHEDIR}/fetch_send_mail.lock"
-REACHDOMAIN="${HOME}/bin/reachdomain"
 ACCOUNTS=
 OIMAP_UI="quiet"
 VERBOSE=
@@ -57,7 +56,7 @@ run() {
 
 
 if [[ -e "${LOCKFILE}" ]]; then
-    if pgrep "(reachdomain|imapfilter|offlineimap)" > /dev/null; then
+    if pgrep -f "(reachdomain|imapfilter|offlineimap)" > /dev/null; then
         msg "ERROR: Lock file already present, exiting."
         exit 1
     else
@@ -81,7 +80,7 @@ for account in ${ACCOUNTS[@]}; do
             ;;
     esac
 
-    if _msg=$($REACHDOMAIN -v -d $DOMAIN); then
+    if _msg=$(reachdomain -v -d $DOMAIN); then
         msg "INFO: $_msg"
     else
         msg "ERROR: ${${(@f)_msg}[2]}"
@@ -89,7 +88,7 @@ for account in ${ACCOUNTS[@]}; do
         continue
     fi
 
-    ~/bin/getmailpass.py $account > /dev/null
+    getmailpass.py $account > /dev/null
 
     #run imapfilter -c ~/.imapfilter/$account.lua -l $LOGFILE $VERBOSE
 done
