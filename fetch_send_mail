@@ -79,13 +79,13 @@ for account in ${ACCOUNTS[@]}; do
             ;;
     esac
 
-    if _msg=$(reachdomain -v -d $DOMAIN); then
-        msg "INFO: $_msg"
-    else
-        msg "ERROR: ${${(@f)_msg}[2]}"
-        ACCOUNTS=("${(@)ACCOUNTS:#$account}")
-        continue
-    fi
+    #if _msg=$(reachdomain -v -d $DOMAIN); then
+    #    msg "INFO: $_msg"
+    #else
+    #    msg "ERROR: ${${(@f)_msg}[2]}"
+    #    ACCOUNTS=("${(@)ACCOUNTS:#$account}")
+    #    continue
+    #fi
 
     getmailpass.py $account > /dev/null
 
