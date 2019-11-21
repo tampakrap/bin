@@ -15,7 +15,7 @@ def get_passeval(account):
     elif account == 'seznam':
         account += '.cz'
     elif account == 'uplus':
-        account = 'google.com'
+        account = 'mutt'
         service = 'uplus'
     try:
         passfile_content = keyring.get_password(service, account).split('\n')[0]
