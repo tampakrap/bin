@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#!/usr/bin/env python3
 
 # Take an mbox HTML message (e.g. from mutt), split it using munpack
 # (a separate program), and rewrite it so it can be viewed in an
@@ -49,7 +49,7 @@ def view_html_message(tmpdir):
 
         if part.get_content_subtype() == 'html':
             if html_part:
-                print "Eek, more than one html part!"
+                print("Eek, more than one html part!")
             html_part = part
 
         # Save it to a file in the temp dir.
@@ -65,7 +65,7 @@ def view_html_message(tmpdir):
         # email message can't be used to overwrite important files.
         # As a first step, guard against ../
         if '../' in filename:
-            print "Eek! Possible security problem in filename", filename
+            print(f"Eek! Possible security problem in filename {filename}")
             continue
 
         filename = os.path.join(tmpdir, filename)
@@ -94,7 +94,7 @@ def view_html_message(tmpdir):
                 break     # no need to look at other keys
 
         if not content_id:
-            print filename, "doesn't have a Content-Id, not saving"
+            print(f"{filename} doesn't have a Content-Id, not saving")
             # print "keys:", part.keys()
 
     # for sf in subfiles:
@@ -115,7 +115,7 @@ def view_html_message(tmpdir):
     fp.close()
 
     # Now we have the file. Call firefox on it.
-    print "Calling firefox for file://" + htmlfile
+    print(f"Calling firefox for file://{htmlfile}")
     os.system("firefox -new-window file://" + htmlfile)
 
     # Wait a while to make sure firefox has loads the imgaes, then clean up.
