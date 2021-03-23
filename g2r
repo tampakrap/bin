@@ -1,4 +1,0 @@
-#!/bin/sh
-
-[ -e gem2rpm.yml ] && cfg="--config gem2rpm.yml"
-exec gem2rpm $cfg -o *.spec *.gem

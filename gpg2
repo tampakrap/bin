@@ -1,7 +1,0 @@
-#!/bin/sh
-
-_GPG_TTY=$(LC_ALL=C tty)
-
-[ "$_GPG_TTY" != 'not a tty' ] && export DISPLAY=
-
-/usr/bin/gpg2 "$@"
