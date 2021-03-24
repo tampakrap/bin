@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+help() {
+    cat << EOF
+Wrapper script for 1password-cli op signin command. It checks if there is an active session, otherwise it creates a new one.
+EOF
+}
+
+OP_SESSION_PATH="${HOME}/.cache/op/session"
+if [[ -f $OP_SESSION_PATH ]]; then
+    OP_SESSION=$(cat ${HOME}/.cache/op/session)
+    op --session $OP_SESSION signin my -r > $OP_SESSION_PATH
+else
+    op signin my -r > $OP_SESSION_PATH
+    OP_SESSION=$(cat ${HOME}/.cache/op/session)
+fi
+
+echo $OP_SESSION
