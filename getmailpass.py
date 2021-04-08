@@ -13,7 +13,7 @@ def get_passeval(account):
         account = 'google'
         service = 'forkbomb.gr/{}/mutt'.format(hostname)
     elif account == 'seznam':
-        account += '.cz'
+        service = 'forkbomb.gr/{}/mutt'.format(hostname)
     try:
         passfile_content = keyring.get_password(service, account).split('\n')[0]
         return passfile_content
