@@ -1,7 +1,6 @@
 #!/bin/sh
 
 help() {
-    echo
     echo "Extracts the file specified based on the extension"
     echo "Stolen from http://dev.gentoo.org/~steev/files/zshrc"
     echo "Usage: `basename "$0"` <filename>"
@@ -9,7 +8,7 @@ help() {
 }
 
 case $1 in
-    '-h'|'--help') help ;;
+    '-h'|'--help') help && exit ;;
     '') help && exit 1 ;;
 esac
 
