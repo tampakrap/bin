@@ -7,4 +7,4 @@ for dir in $(ls ~/.Mail/$1 | sed -e 's/ /##/' | LC_ALL=C sort); do
     VAR+="=$1/${dir/\#\#/\\ } "
 done
 
-echo $VAR
+echo "=====$1==== $VAR"
