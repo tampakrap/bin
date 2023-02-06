@@ -1,0 +1,50 @@
+#!/usr/bin/env zsh
+
+help() {
+    echo
+    echo "TODO"
+    echo
+    echo "Options:"
+    echo "-m <method> TODO"
+    echo "-t <token>  TODO"
+    echo
+}
+
+[[ -z $1 ]] && help && exit 1
+[[ "$1" == "--help" ]] && help && exit
+
+CONFIG="${HOME}/.config/get-token"
+METHODS=(dotfile pass op)
+METHOD="dotfile"
+TOKEN_KEYS=(
+    cloudflare
+    gemfury
+    github-vault
+)
+
+while getopts m:t:vh arg; do
+    case ${arg} in
+        m) METHOD=${OPTARG}
+            [[ ${METHODS[(r)${METHOD}]} != ${METHOD} ]] && help && exit 1
+            ;;
+        t) TOKEN_KEY=${OPTARG} ;;
+        h) help && exit ;;
+        *) help && exit 1 ;;
+    esac
+done
+
+[[ -z "$TOKEN_KEY" ]] && help && exit 1
+
+case "$METHOD" in
+    dotfile) TOKEN_VALUE=$(cat ${HOME}/$(grep $TOKEN_KEY $CONFIG)) ;;
+    pass)
+        #TODO
+        ;;
+    op)
+        OP_SESSION=$(1pass_signin)
+        #CLOUDFLARE_TOKEN=$(op --session $OP_SESSION --vault TODO get item "${TOKEN_KEY} token" --fields password)
+        #TODO
+        ;;
+esac
+
+echo $TOKEN_VALUE
