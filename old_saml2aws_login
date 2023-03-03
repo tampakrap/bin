@@ -1,0 +1,18 @@
+#!/bin/sh
+
+help() {
+    echo "Login to legacy AWS accounts"
+    echo
+}
+
+case $1 in
+    '-h'|'--help') help && exit ;;
+    'experimental'|'exp') PROFILE='experimental' ;;
+    'staging'|'stage'|'stg') PROFILE='staging' ;;
+    'production'|'prod'|'prd') PROFILE='production' ;;
+    *) help && exit 1 ;;
+esac
+
+echo "export AWS_PROFILE=${PROFILE}" >> ~/.aws/old_role
+CRED_PROCESS=$(grep -A2 "$PROFILE" "$HOME"/.aws/config | grep credential_process | cut -d'=' -f2)
+$CRED_PROCESS > /dev/null
