@@ -20,6 +20,7 @@ TOKEN_KEYS=(
     cloudflare
     gemfury
     github-vault
+    aiven
 )
 
 while getopts m:t:vh arg; do
