@@ -21,6 +21,7 @@ TOKEN_KEYS=(
     gemfury
     github-vault
     aiven
+    teleport
 )
 
 while getopts m:t:vh arg; do
